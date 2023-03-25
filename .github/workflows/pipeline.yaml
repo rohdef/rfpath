@@ -1,0 +1,17 @@
+name: Path library
+
+jobs:
+  build:
+    name: Build rfpath library
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Build project
+        run: |
+          ./gradlew clean build allTests
