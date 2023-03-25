@@ -1,18 +1,13 @@
 plugins {
-    val kotlinVersion = "1.8.10"
+    val kotlinVersion = "1.7.21"
     kotlin("multiplatform") version kotlinVersion
-    kotlin("plugin.serialization") version kotlinVersion
 
     id("io.kotest.multiplatform") version "5.5.5"
 }
 
-group = "dk.rohdef.rfpath"
+group = "dk.rohdef.rfpath.rfpath"
 version = "1.0-SNAPSHOT"
 description = "Path library to handle basic file system IO"
-
-repositories {
-    mavenCentral()
-}
 
 kotlin {
     val hostOs = System.getProperty("os.name")
@@ -40,12 +35,10 @@ kotlin {
 
                 implementation("com.soywiz.korlibs.korio:korio:3.3.1")
                 implementation("com.squareup.okio:okio:$okioVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
             }
         }
         val nativeTest by getting {
             dependencies {
-                implementation(project(":rfpath-test"))
                 implementation(kotlin("test"))
 
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.3-native-mt")

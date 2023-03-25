@@ -1,4 +1,4 @@
-rootProject.name = "rfpath"
+rootProject.name = "gourmet"
 
 include(
     "rfpath",
