@@ -18,7 +18,7 @@ jobs:
       - name: Build project
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: clean build allTests
+          arguments: build
 
       - name: Publish package
         uses: gradle/gradle-build-action@v2
