@@ -1,12 +1,11 @@
 plugins {
-    val kotlinVersion = "1.7.21"
+    val kotlinVersion = "1.8.20-RC2"
     kotlin("multiplatform") version kotlinVersion
 
     id("io.kotest.multiplatform") version "5.5.5"
 }
 
 group = "dk.rohdef.rfpath.rfpath-test"
-version = "1.0-SNAPSHOT"
 description = "Testing implementations to enable testing with the path library rfpath"
 
 kotlin {
