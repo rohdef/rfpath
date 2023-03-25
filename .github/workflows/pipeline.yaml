@@ -16,5 +16,13 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Build project
-        run: |
-          ./gradlew clean build allTests
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: clean build allTests
+
+      - name: Publish package
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

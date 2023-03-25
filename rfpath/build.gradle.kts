@@ -3,6 +3,8 @@ plugins {
     kotlin("multiplatform") version kotlinVersion
 
     id("io.kotest.multiplatform") version "5.5.5"
+
+    id("maven-publish")
 }
 
 group = "dk.rohdef.rfpath.rfpath"
