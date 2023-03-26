@@ -1,3 +1,5 @@
+import java.net.URI
+
 plugins {
     val kotlinVersion = "1.8.20-RC2"
     kotlin("multiplatform") version kotlinVersion
@@ -18,6 +20,30 @@ kotlin {
         hostOs == "Linux" -> linuxX64("native")
         isMingwX64 -> mingwX64("native")
         else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
+    }
+
+    publishing {
+        publications {
+            create<MavenPublication>("maven") {
+                from(components["kotlin"])
+                groupId = "dk.rohdef.rfpath"
+                artifactId = "rfpath"
+                version = "${project.version}"
+//                artifact sourcesJar
+//                artifact javadocJar
+            }
+        }
+
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = URI.create("https://maven.pkg.github.com/rohdef/rfpath")
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
+            }
+        }
     }
 
     val kotestVersion = "5.5.5"
