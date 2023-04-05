@@ -1,4 +1,5 @@
 import dk.rohdef.rfpath.convention.configureCommon
+import dk.rohdef.rfpath.convention.kotest
 import dk.rohdef.rfpath.convention.publishToGithub
 
 plugins {
@@ -6,17 +7,17 @@ plugins {
     id("io.kotest.multiplatform") version "5.5.5"
 }
 
-description = "Testing implementations to enable testing with the path library rfpath"
+description = "Path library to handle basic file system IO"
 
 configureCommon()
 publishToGithub()
 kotlin {
+
     val okioVersion = "3.2.0"
     sourceSets {
         val nativeMain by getting {
             dependencies {
-                implementation(project(":rfpath-core"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-Beta")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
                 implementation("com.soywiz.korlibs.korio:korio:3.3.1")
                 implementation("com.squareup.okio:okio:$okioVersion")
@@ -25,7 +26,8 @@ kotlin {
         }
         val nativeTest by getting {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.0-Beta")
+                kotest()
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.3-native-mt")
 
                 implementation("com.squareup.okio:okio-fakefilesystem:$okioVersion")
             }

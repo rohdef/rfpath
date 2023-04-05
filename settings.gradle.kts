@@ -1,6 +1,6 @@
 rootProject.name = "rfpath"
 
 include(
-    "rfpath",
+    "rfpath-core",
     "rfpath-test",
 )
