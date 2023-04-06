@@ -7,7 +7,7 @@ plugins {
     id("io.kotest.multiplatform") version "5.5.5"
 }
 
-description = "Path library to handle basic file system IO trigger"
+description = "Path library to handle basic file system IO"
 
 configureCommon()
 publishToGithub()
