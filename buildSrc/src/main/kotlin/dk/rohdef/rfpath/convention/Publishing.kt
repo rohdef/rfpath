@@ -14,8 +14,8 @@ fun Project.publishToGithub() {
                 name = "GitHubPackages"
                 url = URI.create("https://maven.pkg.github.com/rohdef/rfpath")
                 credentials {
-                    username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
-                    password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+                    username = project.findProperty("github_packages.user") as String? ?: System.getenv("GITHUB_ACTOR")
+                    password = project.findProperty("github_packages.key") as String? ?: System.getenv("GITHUB_TOKEN")
                 }
             }
         }
