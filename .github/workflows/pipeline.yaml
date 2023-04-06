@@ -8,6 +8,10 @@ jobs:
     name: Build rfpath library
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
