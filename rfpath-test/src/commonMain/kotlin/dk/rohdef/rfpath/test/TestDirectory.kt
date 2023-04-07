@@ -6,9 +6,9 @@ import dk.rohdef.rfpath.NewFileError
 import dk.rohdef.rfpath.Path
 import dk.rohdef.rfpath.permissions.Permissions
 
-class TestDirectory private constructor(
+abstract class TestDirectory(
     override val absolutePath: String
-): Path.Directory {
+) : Path.Directory {
     override suspend fun list(): Either<DirectoryError, List<Path<*, *>>> {
         TODO("not implemented")
     }
@@ -27,11 +27,5 @@ class TestDirectory private constructor(
 
     override suspend fun currentPermissions(): Permissions {
         TODO("not implemented")
-    }
-
-    companion object {
-        fun createUnsafe(): TestDirectory {
-            TODO()
-        }
     }
 }

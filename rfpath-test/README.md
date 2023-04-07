@@ -2,6 +2,19 @@
 
 TBD
 
+
+## Usage
+
+TBD
+
+
+## Extended usage
+
+Not all testing scenarios can be predicted.
+To accommodate custom scenarios `TestFile` and `TestDirectory` are abstract classes.
+Thus custom and complex behaviors can be implemented for usage in tests.
+
+
 ## Current state
 This is pre-alpha - use at your own risk.
 

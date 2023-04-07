@@ -11,7 +11,7 @@ class FileTest : FunSpec({
 
     test("file has contents") {
         // Given
-        val file = TestFile.createUnsafe("/file.txt")
+        val file = TestFileDefault.createUnsafe("/file.txt")
 
         file.contents = """
             this is a test
@@ -30,7 +30,7 @@ class FileTest : FunSpec({
 
     test("contents can be changed") {
         // Given
-        val file = TestFile.createUnsafe("/file.txt")
+        val file = TestFileDefault.createUnsafe("/file.txt")
 
         // When
         val textResult = file.write(
@@ -51,8 +51,8 @@ class FileTest : FunSpec({
 
     test("read permissions") {
         // Given
-        val fileWithDefaultPermissions = TestFile.createUnsafe("/file.txt")
-        val fileWithEmptyPermissions = TestFile.createUnsafe(
+        val fileWithDefaultPermissions = TestFileDefault.createUnsafe("/file.txt")
+        val fileWithEmptyPermissions = TestFileDefault.createUnsafe(
             "/file.txt",
             permissions = Permissions(
                 owner = emptySet(),
@@ -60,7 +60,7 @@ class FileTest : FunSpec({
                 other = emptySet(),
             )
         )
-        val fileWithMixedPermissions = TestFile.createUnsafe(
+        val fileWithMixedPermissions = TestFileDefault.createUnsafe(
             "/file.txt",
             permissions = Permissions(
                 owner = setOf(Permission.READ, Permission.EXECUTE),
@@ -68,7 +68,7 @@ class FileTest : FunSpec({
                 other = setOf(Permission.READ, Permission.WRITE),
             )
         )
-        val fileWithMixedPermissions2 = TestFile.createUnsafe(
+        val fileWithMixedPermissions2 = TestFileDefault.createUnsafe(
             "/file.txt",
             permissions = Permissions(
                 owner = setOf(Permission.EXECUTE),
@@ -108,9 +108,9 @@ class FileTest : FunSpec({
 
     test("change permission") {
         // Given
-        val fileWithEmptyPermissions = TestFile.createUnsafe("/file.txt")
-        val fileWithMixedPermissions = TestFile.createUnsafe("/file.txt")
-        val fileWithMixedPermissions2 = TestFile.createUnsafe("/file.txt")
+        val fileWithEmptyPermissions = TestFileDefault.createUnsafe("/file.txt")
+        val fileWithMixedPermissions = TestFileDefault.createUnsafe("/file.txt")
+        val fileWithMixedPermissions2 = TestFileDefault.createUnsafe("/file.txt")
 
         // When
         val emptyPermissionsResult = fileWithEmptyPermissions
