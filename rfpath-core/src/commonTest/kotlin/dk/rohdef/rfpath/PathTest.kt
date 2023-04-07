@@ -34,6 +34,10 @@ class PathTest {
             TODO("not implemented")
         }
 
+        override suspend fun readText(): Either<FileError, String> {
+            TODO("not implemented")
+        }
+
         override suspend fun write(text: String): Either<FileError, Path.File> {
             TODO("not implemented")
         }
