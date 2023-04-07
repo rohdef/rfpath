@@ -4,11 +4,10 @@ import arrow.core.Either
 import dk.rohdef.rfpath.DirectoryError
 import dk.rohdef.rfpath.NewFileError
 import dk.rohdef.rfpath.Path
-import dk.rohdef.rfpath.PathError
 import dk.rohdef.rfpath.permissions.Permissions
 
 class TestDirectory : Path.Directory {
-    override suspend fun list(): Either<PathError, List<Path<*>>> {
+    override suspend fun list(): Either<DirectoryError, List<Path<*, *>>> {
         TODO("not implemented")
     }
 
@@ -16,7 +15,7 @@ class TestDirectory : Path.Directory {
         TODO("not implemented")
     }
 
-    override suspend fun resolve(subpath: String): Either<PathError, Path<*>> {
+    override suspend fun resolve(subpath: String): Either<DirectoryError, Path<*, *>> {
         TODO("not implemented")
     }
 

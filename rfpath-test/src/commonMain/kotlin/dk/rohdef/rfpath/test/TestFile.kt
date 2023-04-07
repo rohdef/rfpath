@@ -23,7 +23,7 @@ class TestFile private constructor(
         return this.right()
     }
 
-    override suspend fun setPermissions(permissions: Permissions): Either<DirectoryError, TestFile> {
+    override suspend fun setPermissions(permissions: Permissions): Either<FileError, TestFile> {
         this.permissions = permissions
         return this.right()
     }

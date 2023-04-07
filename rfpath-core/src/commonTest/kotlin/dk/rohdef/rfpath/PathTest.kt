@@ -26,7 +26,7 @@ class PathTest {
     private class DefaultPath : Path.File {
         override val absolutePath: String = "absolute path"
 
-        override suspend fun setPermissions(permissions: Permissions): Either<DirectoryError, Path.File> {
+        override suspend fun setPermissions(permissions: Permissions): Either<FileError, Path.File> {
             TODO("not implemented")
         }
 

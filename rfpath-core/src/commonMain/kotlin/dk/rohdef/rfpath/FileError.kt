@@ -1,6 +1,6 @@
 package dk.rohdef.rfpath
 
-sealed interface FileError : PathError {
+sealed interface FileError : PathError<Path.File> {
     object NotAFile : FileError
 }
 

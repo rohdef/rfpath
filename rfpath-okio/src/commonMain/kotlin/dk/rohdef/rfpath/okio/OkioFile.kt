@@ -17,7 +17,7 @@ class OkioFile private constructor(
 ) : Path.File {
     override val absolutePath: String = path.toString()
 
-    override suspend fun setPermissions(permissions: Permissions): Either<DirectoryError, Path.File> {
+    override suspend fun setPermissions(permissions: Permissions): Either<FileError, Path.File> {
         vfs.setUnixPermission(permissions.toVfsPermissions())
 
         return this.right()

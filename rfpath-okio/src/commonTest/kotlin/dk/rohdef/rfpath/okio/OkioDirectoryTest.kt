@@ -1,6 +1,5 @@
 package dk.rohdef.rfpath.okio
 
-import dk.rohdef.rfpath.DirectoryError
 import dk.rohdef.rfpath.DirectoryInstance
 import dk.rohdef.rfpath.NewFileError
 import io.kotest.assertions.arrow.core.shouldBeLeft

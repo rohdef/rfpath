@@ -31,7 +31,7 @@ class OkioDirectory private constructor(
 
     private val vfs: VfsFile = VfsFile(LocalVfsNative(async = true), path.toString())
 
-    override suspend fun list(): Either<PathError, List<Path<*>>> {
+    override suspend fun list(): Either<PathError<*>, List<Path<*, *>>> {
         return fileSystem.list(path)
             .traverse {
                 val metadata = fileSystem.metadataOrNull(it)
@@ -55,7 +55,7 @@ class OkioDirectory private constructor(
         }
     }
 
-    override suspend fun resolve(subpath: String): Either<PathError, Path<*>> {
+    override suspend fun resolve(subpath: String): Either<PathError<*>, Path<*, *>> {
         val resolvedPath = path.resolve(subpath)
 
         val metadata = fileSystem.metadataOrNull(resolvedPath)

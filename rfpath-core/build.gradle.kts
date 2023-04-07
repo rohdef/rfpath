@@ -12,24 +12,17 @@ description = "Path library to handle basic file system IO"
 configureCommon()
 publishToGithub()
 kotlin {
-
-    val okioVersion = "3.2.0"
     sourceSets {
         val commonMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-
-                implementation("com.soywiz.korlibs.korio:korio:3.3.1")
-                implementation("com.squareup.okio:okio:$okioVersion")
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
             }
         }
         val commonTest by getting {
             dependencies {
                 kotest()
+                implementation(project(":rfpath-test"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.3-native-mt")
-
-                implementation("com.squareup.okio:okio-fakefilesystem:$okioVersion")
             }
         }
     }

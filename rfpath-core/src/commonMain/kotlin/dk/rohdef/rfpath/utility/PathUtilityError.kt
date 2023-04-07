@@ -1,7 +1,5 @@
 package dk.rohdef.rfpath.utility
 
-import dk.rohdef.rfpath.PathError
-
 sealed interface PathUtilityError {
     sealed interface CreateTemporaryFileError : PathUtilityError {
         object CannotCreateFile : CreateTemporaryFileError

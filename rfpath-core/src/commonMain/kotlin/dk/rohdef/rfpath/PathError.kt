@@ -1,3 +1,3 @@
 package dk.rohdef.rfpath
 
-sealed interface PathError
+sealed interface PathError<T: Path<T, *>>

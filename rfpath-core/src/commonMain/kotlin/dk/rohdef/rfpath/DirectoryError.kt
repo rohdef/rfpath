@@ -1,6 +1,6 @@
 package dk.rohdef.rfpath
 
-sealed interface DirectoryError : PathError
+sealed interface DirectoryError : PathError<Path.Directory>
 
 sealed interface ResolveError : DirectoryError {
 }
