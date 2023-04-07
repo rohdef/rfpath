@@ -15,7 +15,7 @@ kotlin {
 
     val okioVersion = "3.2.0"
     sourceSets {
-        val nativeMain by getting {
+        val commonMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
@@ -24,7 +24,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
             }
         }
-        val nativeTest by getting {
+        val commonTest by getting {
             dependencies {
                 kotest()
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.3-native-mt")

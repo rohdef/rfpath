@@ -12,7 +12,7 @@ fun Project.configureCommon() {
 
     kotlin {
         sourceSets {
-            val nativeMain by getting {
+            val commonMain by getting {
                 dependencies {
                     implementation("io.arrow-kt:arrow-core:$arrowKtVersion")
 
@@ -21,7 +21,7 @@ fun Project.configureCommon() {
                 }
             }
 
-            val nativeTest by getting {
+            val commonTest by getting {
                 dependencies {
                     implementation(kotlin("test"))
                 }
