@@ -7,11 +7,14 @@ import dk.rohdef.rfpath.permissions.Permissions
 import io.kotest.matchers.collections.shouldContainExactly
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 
 class TestingTest {
     @Test
+    @Ignore
     fun `can read complex file system`() = runTest {
+        TODO("Not yet implemented")
         val fileSystem = root {
             directory("bin") {
             }

@@ -9,8 +9,6 @@ import io.kotest.matchers.shouldBe
 class FileTest : FunSpec({
     coroutineTestScope = true
 
-    test("absolute path")
-
     test("file has contents") {
         // Given
         val file = TestFile.createUnsafe("/file.txt")
@@ -142,19 +140,19 @@ class FileTest : FunSpec({
 
         // Then
         val emptyPermissions = emptyPermissionsResult.shouldBeRight()
-        emptyPermissions shouldBe Permissions(
+        emptyPermissions.currentPermissions() shouldBe Permissions(
             owner = emptySet(),
             group = emptySet(),
             other = emptySet(),
         )
         val mixedPermissions = mixedPermissionsResult.shouldBeRight()
-        mixedPermissions shouldBe Permissions(
+        mixedPermissions.currentPermissions() shouldBe Permissions(
             owner = setOf(Permission.READ, Permission.EXECUTE),
             group = setOf(Permission.WRITE, Permission.EXECUTE),
             other = setOf(Permission.READ, Permission.WRITE),
         )
         val mixedPermissions2 = mixedPermissions2Result.shouldBeRight()
-        mixedPermissions2 shouldBe Permissions(
+        mixedPermissions2.currentPermissions() shouldBe Permissions(
             owner = setOf(Permission.EXECUTE),
             group = setOf(Permission.READ),
             other = setOf(Permission.WRITE),
