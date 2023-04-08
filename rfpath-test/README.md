@@ -2,6 +2,10 @@
 
 TBD
 
+The testing library is not designed to be thread safe.
+Due to the mutable nature of file systems there is no current motivation to
+make the test structures immutable as would normally be the case.
+
 
 ## Usage
 

@@ -20,6 +20,7 @@ Major features in the TODO are
 (please see [Issues](https://github.com/rohdef/rfpath/issues?q=is%3Aopen%20is%3Aissue%20project%3Arohdef%2F3) for a complete list):
 
 - Reading/writing binary content to files
+- Creation of sub-directories
 - Streamed reading/writing of data from/to files
 - Handling of directory/file ownership
 - Testing implementations of error scenarios

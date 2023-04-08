@@ -10,6 +10,7 @@ abstract class TestFile<T : TestFile<T>>(
     override val absolutePath: String,
     var permissions: Permissions,
 ) : Path.File {
+    @Suppress("UNCHECKED_CAST")
     private val self = (this as T)
     var contents = ""
 
