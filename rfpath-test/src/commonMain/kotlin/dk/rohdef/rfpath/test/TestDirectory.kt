@@ -18,7 +18,7 @@ abstract class TestDirectory(
         TODO("not implemented")
     }
 
-    override suspend fun makeDirectory(directoryName: String): Either<MakeDirectoryError, Path.Directory> {
+    override suspend fun makeDirectory(directoryName: String): Either<MakeDirectoryError, TestDirectoryDefault> {
         if (contents.containsKey(directoryName)) {
             return MakeDirectoryError.DirectoryExists("$absolutePath/$directoryName").left()
         }
@@ -28,7 +28,7 @@ abstract class TestDirectory(
         return directory.right()
     }
 
-    override suspend fun makeFile(fileName: String): Either<MakeFileError, Path.File> {
+    override suspend fun makeFile(fileName: String): Either<MakeFileError, TestFileDefault> {
         if (contents.containsKey(fileName)) {
             return MakeFileError.FileExists("$absolutePath/$fileName").left()
         }
