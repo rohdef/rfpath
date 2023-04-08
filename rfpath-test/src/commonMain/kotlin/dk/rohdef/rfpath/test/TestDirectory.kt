@@ -19,6 +19,10 @@ abstract class TestDirectory(
     }
 
     override suspend fun makeDirectory(directoryName: String): Either<MakeDirectoryError, Path.Directory> {
+        if (contents.containsKey(directoryName)) {
+            return MakeDirectoryError.DirectoryExists("$absolutePath/$directoryName").left()
+        }
+
         val directory = TestDirectoryDefault.createUnsafe("$absolutePath/$directoryName")
         contents.put(directoryName, directory)
         return directory.right()

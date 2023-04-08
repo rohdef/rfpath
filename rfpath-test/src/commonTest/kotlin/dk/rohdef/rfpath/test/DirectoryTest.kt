@@ -51,7 +51,7 @@ class DirectoryTest : FunSpec({
         directory2 shouldBe TestDirectoryDefault.createUnsafe("/usr/local/etc")
         val directoryExists = directoryExistsResult.shouldBeLeft()
         directoryExists shouldBe
-                MakeDirectoryError.DirectoryExists("/usr/local/foo")
+                MakeDirectoryError.DirectoryExists("/usr/local/bin")
     }
 
     xtest("Listing elements in directory") {
