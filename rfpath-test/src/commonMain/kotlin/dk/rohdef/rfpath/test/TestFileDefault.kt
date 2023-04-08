@@ -7,6 +7,37 @@ class TestFileDefault private constructor(
     override val absolutePath: String,
     permissions: Permissions,
 ) : TestFile<TestFileDefault>(absolutePath, permissions) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other is TestDirectoryDefault) {
+            return false
+        }
+
+        other as TestFileDefault
+
+        return absolutePath == other.absolutePath
+                && permissions == other.permissions
+                && contents == other.contents
+    }
+
+    override fun hashCode(): Int {
+        return absolutePath.hashCode() * 7 +
+                permissions.hashCode() * 13 +
+                contents.hashCode() * 17
+    }
+
+    override fun toString(): String {
+        return """
+            {
+                "TestFileDefault": {
+                    "absolutePath": "$absolutePath",
+                    "permissions": $permissions,
+                    "contents": "$contents"
+                }
+            }
+        """.trimIndent()
+    }
+
     companion object {
         fun createUnsafe(
             absolutePath: String,

@@ -16,7 +16,7 @@ class DirectoryTest : FunSpec({
     test("Create new file") {
         // Given
         val directory = TestDirectoryDefault.createUnsafe(
-            "/usr/local/",
+            "/usr/local",
         )
 
         // When
@@ -28,16 +28,16 @@ class DirectoryTest : FunSpec({
         val file = fileResult.shouldBeRight()
         val file2 = file2Result.shouldBeRight()
 
-        file shouldBe TestFileDefault.createUnsafe("/usr/lcal/foo")
+        file shouldBe TestFileDefault.createUnsafe("/usr/local/foo")
         file2 shouldBe TestFileDefault.createUnsafe("/usr/local/fish.sh")
         val fileExists = fileExistsResult.shouldBeLeft()
         fileExists shouldBe
                 NewFileError.FileExists("/usr/local/foo")
     }
 
-    test("Listing elements in directory") {
+    xtest("Listing elements in directory") {
         // Given
-        val emptyDirectory = TestDirectoryDefault.createUnsafe("/usr/local/")
+        val emptyDirectory = TestDirectoryDefault.createUnsafe("/usr/local")
         val directory = TODO("need structure to create complex directory first")
 
         // When
@@ -45,8 +45,8 @@ class DirectoryTest : FunSpec({
 //        val contentsResult = directory.list()
 
         // Then
-        val emptyContents = emptyContentsResult.shouldBeRight()
-        emptyContents shouldContainInOrder listOf()
+//        val emptyContents = emptyContentsResult.shouldBeRight()
+//        emptyContents shouldContainInOrder listOf()
 
 //        val contents = contentsResult.shouldBeRight()
 //        contents shouldContainExactlyInAnyOrder listOf()
@@ -55,22 +55,22 @@ class DirectoryTest : FunSpec({
     test("Resolve subelement") {
         // Given
         val directory = TestDirectoryDefault.createUnsafe(
-            "/usr/local/",
+            "/usr/local",
         )
         directory.newFile("foo")
             .shouldBeRight()
         // TODO: 08/04/2023 rohdef - handle creation of directories
     }
 
-    test("Reading current permissions") {
+    xtest("Reading current permissions") {
         // Given
-        TODO("Use test generators to do exhaustive testing")
+        // TODO Use test generators to do exhaustive testing
     }
 
-    test("Setting new permissions") {
+    xtest("Setting new permissions") {
         // Given
         val directory = TestDirectoryDefault.createUnsafe(
-            "/usr/local/",
+            "/usr/local",
         )
     }
 })
