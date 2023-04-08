@@ -19,7 +19,9 @@ abstract class TestDirectory(
     }
 
     override suspend fun makeDirectory(directoryName: String): Either<MakeDirectoryError, Path.Directory> {
-        TODO("not implemented")
+        val directory = TestDirectoryDefault.createUnsafe("$absolutePath/$directoryName")
+        contents.put(directoryName, directory)
+        return directory.right()
     }
 
     override suspend fun makeFile(fileName: String): Either<MakeFileError, Path.File> {

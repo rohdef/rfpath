@@ -47,8 +47,8 @@ class DirectoryTest : FunSpec({
         val directory = directoryResult.shouldBeRight()
         val directory2 = directory2Result.shouldBeRight()
 
-        directory shouldBe TestDirectoryDefault.createUnsafe("/usr/local/foo")
-        directory2 shouldBe TestDirectoryDefault.createUnsafe("/usr/local/fish.sh")
+        directory shouldBe TestDirectoryDefault.createUnsafe("/usr/local/bin")
+        directory2 shouldBe TestDirectoryDefault.createUnsafe("/usr/local/etc")
         val directoryExists = directoryExistsResult.shouldBeLeft()
         directoryExists shouldBe
                 MakeDirectoryError.DirectoryExists("/usr/local/foo")

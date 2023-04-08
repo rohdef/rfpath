@@ -8,16 +8,16 @@ class TestFileDefault private constructor(
     permissions: Permissions,
 ) : TestFile<TestFileDefault>(absolutePath, permissions) {
     override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other is TestDirectoryDefault) {
-            return false
+        if (this === other) {
+            return true
+        }
+        if (other is TestFileDefault) {
+            return absolutePath == other.absolutePath
+                    && permissions == other.permissions
+                    && contents == other.contents
         }
 
-        other as TestFileDefault
-
-        return absolutePath == other.absolutePath
-                && permissions == other.permissions
-                && contents == other.contents
+        return false
     }
 
     override fun hashCode(): Int {

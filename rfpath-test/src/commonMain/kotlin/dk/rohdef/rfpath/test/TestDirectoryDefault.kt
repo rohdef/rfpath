@@ -6,12 +6,15 @@ class TestDirectoryDefault private constructor(
     override val absolutePath: String
 ) : TestDirectory(absolutePath) {
     override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (this::class.isInstance(other)) return false
+        if (this === other) {
+            return true
+        }
+        if (other is TestDirectoryDefault) {
+            return absolutePath == other.absolutePath
+        }
 
-        other as TestDirectoryDefault
+        return false
 
-        return absolutePath == other.absolutePath
     }
 
     override fun hashCode(): Int {
