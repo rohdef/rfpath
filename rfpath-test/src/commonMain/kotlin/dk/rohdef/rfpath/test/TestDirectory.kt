@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
 import dk.rohdef.rfpath.DirectoryError
+import dk.rohdef.rfpath.MakeDirectoryError
 import dk.rohdef.rfpath.MakeFileError
 import dk.rohdef.rfpath.Path
 import dk.rohdef.rfpath.permissions.Permissions
@@ -17,7 +18,7 @@ abstract class TestDirectory(
         TODO("not implemented")
     }
 
-    override suspend fun makeDirectory(directoryName: String): Either<MakeFileError, Path.Directory> {
+    override suspend fun makeDirectory(directoryName: String): Either<MakeDirectoryError, Path.Directory> {
         TODO("not implemented")
     }
 

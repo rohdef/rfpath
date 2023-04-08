@@ -12,6 +12,7 @@ import com.soywiz.korio.file.std.LocalVfsNative
 import dk.rohdef.rfpath.*
 import dk.rohdef.rfpath.permissions.Permissions
 import okio.FileSystem
+import okio.IOException
 
 class OkioDirectory private constructor(
     private val fileSystem: FileSystem,
@@ -46,8 +47,19 @@ class OkioDirectory private constructor(
             }
     }
 
-    override suspend fun makeDirectory(directoryName: String): Either<MakeFileError, Path.Directory> {
-        TODO("not implemented")
+    override suspend fun makeDirectory(directoryName: String): Either<MakeDirectoryError, Path.Directory> {
+        val newDirectoryPath = path.resolve(directoryName)
+
+        try {
+            fileSystem.createDirectories(newDirectoryPath, true)
+            return OkioDirectory(fileSystem, newDirectoryPath).right()
+        } catch (exception: IOException) {
+            if (exception.message?.contains("already exist") ?: false) {
+                return MakeDirectoryError.DirectoryExists(newDirectoryPath.toString()).left()
+            } else {
+                throw exception
+            }
+        }
     }
 
     override suspend fun makeFile(fileName: String): Either<MakeFileError, Path.File> {

@@ -61,7 +61,7 @@ class OkioDirectoryTest {
             .shouldBeRight()
 
         val expectedDirectoryPath = testHelpers.temporaryDirectoryPath
-            .resolve("new-file")
+            .resolve("new-directory")
             .toString()
         directory.absolutePath
             .shouldBe(expectedDirectoryPath)
@@ -70,7 +70,7 @@ class OkioDirectoryTest {
     @Test
     fun `Make directory when directory exists`() = runTest {
         val error = testDirectoryUnwrapped()
-            .makeDirectory(testHelpers.dummyFilename3)
+            .makeDirectory(testHelpers.dummySubDirectory)
             .shouldBeLeft()
 
         val temporaryDirectory = testHelpers.temporaryDirectoryPath
