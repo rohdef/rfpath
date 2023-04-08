@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
 import dk.rohdef.rfpath.DirectoryError
-import dk.rohdef.rfpath.NewFileError
+import dk.rohdef.rfpath.MakeFileError
 import dk.rohdef.rfpath.Path
 import dk.rohdef.rfpath.permissions.Permissions
 
@@ -17,9 +17,13 @@ abstract class TestDirectory(
         TODO("not implemented")
     }
 
-    override suspend fun newFile(fileName: String): Either<NewFileError, Path.File> {
+    override suspend fun makeDirectory(directoryName: String): Either<MakeFileError, Path.Directory> {
+        TODO("not implemented")
+    }
+
+    override suspend fun makeFile(fileName: String): Either<MakeFileError, Path.File> {
         if (contents.containsKey(fileName)) {
-            return NewFileError.FileExists("$absolutePath/$fileName").left()
+            return MakeFileError.FileExists("$absolutePath/$fileName").left()
         }
 
         val file = TestFileDefault.createUnsafe("$absolutePath/$fileName")

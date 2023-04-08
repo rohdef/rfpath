@@ -48,7 +48,9 @@ sealed interface Path<T : Path<T, E>, E: PathError<T>> {
     interface Directory : Path<Directory, DirectoryError> {
         suspend fun list(): Either<PathError<*>, List<Path<*, *>>>
 
-        suspend fun newFile(fileName: String): Either<NewFileError, File>
+        suspend fun makeFile(fileName: String): Either<MakeFileError, File>
+
+        suspend fun makeDirectory(directoryName: String): Either<MakeFileError, Directory>
 
         suspend fun resolve(subpath: String): Either<PathError<*>, Path<*, *>>
     }

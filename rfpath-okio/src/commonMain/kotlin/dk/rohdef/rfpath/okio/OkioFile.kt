@@ -51,11 +51,11 @@ class OkioFile private constructor(
             }
         }
 
-        fun createFile(fileSystem: FileSystem, path: okio.Path): Either<NewFileError, Path.File> {
+        fun createFile(fileSystem: FileSystem, path: okio.Path): Either<MakeFileError, Path.File> {
             val metadata = fileSystem.metadataOrNull(path)
 
             if (metadata != null) {
-                return NewFileError.FileExists(path.toString()).left()
+                return MakeFileError.FileExists(path.toString()).left()
             }
 
             return OkioFile(fileSystem, path).right()

@@ -36,7 +36,7 @@ class OkioPathUtility private constructor(
             val applicationName = "gourmet"
 
             directory
-                .newFile("${applicationName}-${uuid}")
+                .makeFile("${applicationName}-${uuid}")
                 // TODO: 05/11/2022 rohdef - better error handling
                 .mapLeft { PathUtilityError.CreateTemporaryFileError.CannotCreateFile }
                 .bind()

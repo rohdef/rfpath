@@ -46,7 +46,11 @@ class OkioDirectory private constructor(
             }
     }
 
-    override suspend fun newFile(fileName: String): Either<NewFileError, Path.File> {
+    override suspend fun makeDirectory(directoryName: String): Either<MakeFileError, Path.Directory> {
+        TODO("not implemented")
+    }
+
+    override suspend fun makeFile(fileName: String): Either<MakeFileError, Path.File> {
         return either {
             val file = OkioFile.createFile(fileSystem, path.resolve(fileName))
                 .bind()

@@ -1,7 +1,8 @@
 package dk.rohdef.rfpath.okio
 
 import dk.rohdef.rfpath.DirectoryInstance
-import dk.rohdef.rfpath.NewFileError
+import dk.rohdef.rfpath.MakeDirectoryError
+import dk.rohdef.rfpath.MakeFileError
 import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.matchers.shouldBe
@@ -54,9 +55,35 @@ class OkioDirectoryTest {
     }
 
     @Test
-    fun `Creating a new file`() = runTest {
+    fun `Making a new directory`() = runTest {
+        val directory = testDirectoryUnwrapped()
+            .makeDirectory("new-directory")
+            .shouldBeRight()
+
+        val expectedDirectoryPath = testHelpers.temporaryDirectoryPath
+            .resolve("new-file")
+            .toString()
+        directory.absolutePath
+            .shouldBe(expectedDirectoryPath)
+    }
+
+    @Test
+    fun `Make directory when directory exists`() = runTest {
+        val error = testDirectoryUnwrapped()
+            .makeDirectory(testHelpers.dummyFilename3)
+            .shouldBeLeft()
+
+        val temporaryDirectory = testHelpers.temporaryDirectoryPath
+        val attemptedDirectory = temporaryDirectory.resolve(testHelpers.dummySubDirectory)
+        val expectedError = MakeDirectoryError.DirectoryExists(attemptedDirectory.toString())
+        error
+            .shouldBe(expectedError)
+    }
+
+    @Test
+    fun `Making a new file`() = runTest {
         val file = testDirectoryUnwrapped()
-            .newFile("new-file")
+            .makeFile("new-file")
             .shouldBeRight()
 
         val expectedFilePath = testHelpers.temporaryDirectoryPath
@@ -67,14 +94,14 @@ class OkioDirectoryTest {
     }
 
     @Test
-    fun `New file when file exists`() = runTest {
+    fun `Make file when file exists`() = runTest {
         val error = testDirectoryUnwrapped()
-            .newFile(testHelpers.dummyFilename3)
+            .makeFile(testHelpers.dummyFilename3)
             .shouldBeLeft()
 
         val temporaryDirectory = testHelpers.temporaryDirectoryPath
         val attemptedFile = temporaryDirectory.resolve(testHelpers.dummyFilename3)
-        val expectedError = NewFileError.FileExists(attemptedFile.toString())
+        val expectedError = MakeFileError.FileExists(attemptedFile.toString())
         error
             .shouldBe(expectedError)
     }

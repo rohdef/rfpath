@@ -23,6 +23,8 @@ class OkioTestHelpers {
     val workingDirectory = workingDirectoryPath.toString()
     val temporaryDirectory = temporaryDirectoryPath.toString()
 
+    val dummySubDirectory = "folder"
+
     val dummyFilename1 = "hello.world"
     val dummyFilename2 = "foo"
     val dummyFilename3 = "multi-line"
@@ -35,9 +37,15 @@ class OkioTestHelpers {
         pathWithDummyFiles(fileSystem, workingDirectoryPath)
         pathWithDummyFiles(fileSystem, temporaryDirectoryPath)
 
+        pathWithDummyDirectories(fileSystem, temporaryDirectoryPath)
+
         fileSystem.workingDirectory = workingDirectoryPath
 
         return fileSystem
+    }
+
+    private fun pathWithDummyDirectories(fileSystem: FileSystem, path: Path) {
+        fileSystem.createDirectories(path.resolve(dummySubDirectory), true)
     }
 
     private fun pathWithDummyFiles(fileSystem: FileSystem, path: Path) {

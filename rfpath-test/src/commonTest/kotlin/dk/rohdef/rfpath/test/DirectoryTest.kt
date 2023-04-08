@@ -1,28 +1,25 @@
 package dk.rohdef.rfpath.test
 
-import dk.rohdef.rfpath.NewFileError
-import dk.rohdef.rfpath.permissions.Permission
-import dk.rohdef.rfpath.permissions.Permissions
+import dk.rohdef.rfpath.MakeDirectoryError
+import dk.rohdef.rfpath.MakeFileError
 import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
-import io.kotest.matchers.collections.shouldContainInOrder
 import io.kotest.matchers.shouldBe
 
 class DirectoryTest : FunSpec({
     coroutineTestScope = true
 
-    test("Create new file") {
+    test("Make file") {
         // Given
-        val directory = TestDirectoryDefault.createUnsafe(
+        val baseDirectory = TestDirectoryDefault.createUnsafe(
             "/usr/local",
         )
 
         // When
-        val fileResult = directory.newFile("foo")
-        val file2Result = directory.newFile("fish.sh")
-        val fileExistsResult = directory.newFile("foo")
+        val fileResult = baseDirectory.makeFile("foo")
+        val file2Result = baseDirectory.makeFile("fish.sh")
+        val fileExistsResult = baseDirectory.makeFile("foo")
 
         // Then
         val file = fileResult.shouldBeRight()
@@ -32,7 +29,29 @@ class DirectoryTest : FunSpec({
         file2 shouldBe TestFileDefault.createUnsafe("/usr/local/fish.sh")
         val fileExists = fileExistsResult.shouldBeLeft()
         fileExists shouldBe
-                NewFileError.FileExists("/usr/local/foo")
+                MakeFileError.FileExists("/usr/local/foo")
+    }
+
+    test("Make directory") {
+        // Given
+        val baseDirectory = TestDirectoryDefault.createUnsafe(
+            "/usr/local",
+        )
+
+        // When
+        val directoryResult = baseDirectory.makeDirectory("bin")
+        val directory2Result = baseDirectory.makeDirectory("etc")
+        val directoryExistsResult = baseDirectory.makeDirectory("bin")
+
+        // Then
+        val directory = directoryResult.shouldBeRight()
+        val directory2 = directory2Result.shouldBeRight()
+
+        directory shouldBe TestDirectoryDefault.createUnsafe("/usr/local/foo")
+        directory2 shouldBe TestDirectoryDefault.createUnsafe("/usr/local/fish.sh")
+        val directoryExists = directoryExistsResult.shouldBeLeft()
+        directoryExists shouldBe
+                MakeDirectoryError.DirectoryExists("/usr/local/foo")
     }
 
     xtest("Listing elements in directory") {
@@ -54,10 +73,10 @@ class DirectoryTest : FunSpec({
 
     test("Resolve subelement") {
         // Given
-        val directory = TestDirectoryDefault.createUnsafe(
+        val baseDirectory = TestDirectoryDefault.createUnsafe(
             "/usr/local",
         )
-        directory.newFile("foo")
+        baseDirectory.makeFile("foo")
             .shouldBeRight()
         // TODO: 08/04/2023 rohdef - handle creation of directories
     }
@@ -69,7 +88,7 @@ class DirectoryTest : FunSpec({
 
     xtest("Setting new permissions") {
         // Given
-        val directory = TestDirectoryDefault.createUnsafe(
+        val baseDirectory = TestDirectoryDefault.createUnsafe(
             "/usr/local",
         )
     }
