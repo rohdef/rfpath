@@ -25,8 +25,8 @@ class DirectoryTest : FunSpec({
         val file = fileResult.shouldBeRight()
         val file2 = file2Result.shouldBeRight()
 
-        file shouldBe TestFileDefault.createUnsafe("/usr/local/foo")
-        file2 shouldBe TestFileDefault.createUnsafe("/usr/local/fish.sh")
+        file shouldBe TestFileDefault.createUnsafe(listOf("usr", "local", "foo"))
+        file2 shouldBe TestFileDefault.createUnsafe(listOf("usr", "local", "fish.sh"))
         val fileExists = fileExistsResult.shouldBeLeft()
         fileExists shouldBe
                 MakeFileError.FileExists("/usr/local/foo")

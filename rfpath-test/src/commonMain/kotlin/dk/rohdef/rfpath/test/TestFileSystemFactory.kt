@@ -32,22 +32,28 @@ class DirectoryContext(
     }
 
     fun file(fileName: String, configure: FileContext.() -> Unit) {
-        val file = FileContext(fileName)
+        val file = FileContext(path + fileName)
         file.configure()
 
         files.put(fileName, file)
     }
 
-    suspend fun build(): TestDirectoryDefault {
+    suspend fun build(): TestDirectory {
         return build { TestDirectoryDefault.createUnsafe(path) }
     }
 
-    private suspend fun build(builder: suspend (path: List<String>)->TestDirectoryDefault): TestDirectoryDefault {
+    private suspend fun build(builder: suspend (path: List<String>)->TestDirectory): TestDirectory {
         val directory = builder(path)
 
         directories.forEach { subDirectory ->
             subDirectory.value.build {
                 directory.makeDirectory(subDirectory.key)
+                    .getOrHandle { throw RuntimeException("This is not possible in the test structure: ${it}") }
+            }
+        }
+        files.forEach { subFile ->
+            subFile.value.build {
+                directory.makeFile(subFile.key)
                     .getOrHandle { throw RuntimeException("This is not possible in the test structure: ${it}") }
             }
         }
@@ -57,7 +63,7 @@ class DirectoryContext(
 }
 
 class FileContext(
-    val fileName: String,
+    val path: List<String>,
 ) {
     var contents = ""
 
@@ -67,7 +73,12 @@ class FileContext(
         setOf(Permission.READ),
     )
 
-    internal fun build(): Path.File {
-        return TODO()
+    internal suspend fun build(builder: suspend (path: List<String>)->TestFile<*>): TestFile<*> {
+        val file = builder(path)
+
+        file.contents = contents
+        file.permissions = permissions
+
+        return file
     }
 }

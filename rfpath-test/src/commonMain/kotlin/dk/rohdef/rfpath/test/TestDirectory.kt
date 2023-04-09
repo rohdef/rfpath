@@ -36,7 +36,7 @@ abstract class TestDirectory(
             return MakeFileError.FileExists("$absolutePath/$fileName").left()
         }
 
-        val file = TestFileDefault.createUnsafe("$absolutePath/$fileName")
+        val file = TestFileDefault.createUnsafe(path + fileName)
         contents.put(fileName, file)
         return file.right()
     }

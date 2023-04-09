@@ -4,9 +4,9 @@ import dk.rohdef.rfpath.permissions.Permission
 import dk.rohdef.rfpath.permissions.Permissions
 
 class TestFileDefault private constructor(
-    override val absolutePath: String,
+    path: List<String>,
     permissions: Permissions,
-) : TestFile<TestFileDefault>(absolutePath, permissions) {
+) : TestFile<TestFileDefault>(path, permissions) {
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
@@ -40,14 +40,14 @@ class TestFileDefault private constructor(
 
     companion object {
         fun createUnsafe(
-            absolutePath: String,
+            path: List<String>,
             permissions: Permissions = Permissions(
                 owner = setOf(Permission.READ, Permission.WRITE),
                 group = setOf(Permission.READ, Permission.WRITE),
                 other = emptySet(),
             )
         ): TestFileDefault {
-            return TestFileDefault(absolutePath, permissions)
+            return TestFileDefault(path, permissions)
         }
     }
 }

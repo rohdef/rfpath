@@ -7,12 +7,15 @@ import dk.rohdef.rfpath.Path
 import dk.rohdef.rfpath.permissions.Permissions
 
 abstract class TestFile<T : TestFile<T>>(
-    override val absolutePath: String,
+    val path: List<String>,
     var permissions: Permissions,
 ) : Path.File {
     @Suppress("UNCHECKED_CAST")
     private val self = (this as T)
     var contents = ""
+
+    override val absolutePath: String
+        get() = "/${path.joinToString("/")}"
 
     override suspend fun readText(): Either<FileError, String> {
         return contents.right()
