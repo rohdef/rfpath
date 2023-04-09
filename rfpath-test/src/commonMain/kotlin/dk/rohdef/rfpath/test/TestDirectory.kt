@@ -10,9 +10,12 @@ import dk.rohdef.rfpath.Path
 import dk.rohdef.rfpath.permissions.Permissions
 
 abstract class TestDirectory(
-    override val absolutePath: String
+    val path: List<String>
 ) : Path.Directory {
     val contents = mutableMapOf<String, Path<*, *>>()
+
+    override val absolutePath: String
+        get() = "/${path.joinToString("/")}"
 
     override suspend fun list(): Either<DirectoryError, List<Path<*, *>>> {
         TODO("not implemented")
@@ -23,7 +26,7 @@ abstract class TestDirectory(
             return MakeDirectoryError.DirectoryExists("$absolutePath/$directoryName").left()
         }
 
-        val directory = TestDirectoryDefault.createUnsafe("$absolutePath/$directoryName")
+        val directory = TestDirectoryDefault.createUnsafe(path + directoryName)
         contents.put(directoryName, directory)
         return directory.right()
     }

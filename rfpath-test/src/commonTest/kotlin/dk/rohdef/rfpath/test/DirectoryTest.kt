@@ -13,7 +13,7 @@ class DirectoryTest : FunSpec({
     test("Make file") {
         // Given
         val baseDirectory = TestDirectoryDefault.createUnsafe(
-            "/usr/local",
+            listOf("usr", "local"),
         )
 
         // When
@@ -35,7 +35,7 @@ class DirectoryTest : FunSpec({
     test("Make directory") {
         // Given
         val baseDirectory = TestDirectoryDefault.createUnsafe(
-            "/usr/local",
+            listOf("usr", "local"),
         )
 
         // When
@@ -47,8 +47,8 @@ class DirectoryTest : FunSpec({
         val directory = directoryResult.shouldBeRight()
         val directory2 = directory2Result.shouldBeRight()
 
-        directory shouldBe TestDirectoryDefault.createUnsafe("/usr/local/bin")
-        directory2 shouldBe TestDirectoryDefault.createUnsafe("/usr/local/etc")
+        directory shouldBe TestDirectoryDefault.createUnsafe(listOf("usr", "local", "bin"))
+        directory2 shouldBe TestDirectoryDefault.createUnsafe(listOf("usr", "local", "etc"))
         val directoryExists = directoryExistsResult.shouldBeLeft()
         directoryExists shouldBe
                 MakeDirectoryError.DirectoryExists("/usr/local/bin")
@@ -56,7 +56,7 @@ class DirectoryTest : FunSpec({
 
     xtest("Listing elements in directory") {
         // Given
-        val emptyDirectory = TestDirectoryDefault.createUnsafe("/usr/local")
+        val emptyDirectory = TestDirectoryDefault.createUnsafe(listOf("usr", "local"))
         val directory = TODO("need structure to create complex directory first")
 
         // When
@@ -74,7 +74,7 @@ class DirectoryTest : FunSpec({
     test("Resolve subelement") {
         // Given
         val baseDirectory = TestDirectoryDefault.createUnsafe(
-            "/usr/local",
+            listOf("usr", "local"),
         )
         baseDirectory.makeFile("foo")
             .shouldBeRight()
@@ -89,7 +89,7 @@ class DirectoryTest : FunSpec({
     xtest("Setting new permissions") {
         // Given
         val baseDirectory = TestDirectoryDefault.createUnsafe(
-            "/usr/local",
+            listOf("usr", "local"),
         )
     }
 })

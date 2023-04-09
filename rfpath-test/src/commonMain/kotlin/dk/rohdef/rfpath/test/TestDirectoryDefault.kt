@@ -3,14 +3,15 @@ package dk.rohdef.rfpath.test
 import dk.rohdef.rfpath.permissions.Permissions
 
 class TestDirectoryDefault private constructor(
-    override val absolutePath: String
-) : TestDirectory(absolutePath) {
+    path: List<String>
+) : TestDirectory(path) {
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
         }
         if (other is TestDirectoryDefault) {
-            return absolutePath == other.absolutePath
+            return absolutePath == other.absolutePath &&
+                    contents == other.contents
         }
 
         return false
@@ -22,16 +23,17 @@ class TestDirectoryDefault private constructor(
     }
 
     override fun toString(): String {
+        val formattedContent = contents
+            .map { "${it.key}:${it.value}" }
+            .joinToString(",\n")
+
         return """
             {
-                "testDirectoryDefault": {
+                "testDirectoryDefault-": {
                     "absolutePath": "$absolutePath",
                     "permissions": {},
                     "contents": [
-                        ${contents
-                            .map { it.toString() }
-                            .joinToString { ",\n                        " }
-                        }
+                        ${formattedContent}
                     ]
                 }
             }
@@ -40,14 +42,14 @@ class TestDirectoryDefault private constructor(
 
     companion object {
         fun createUnsafe(
-            absolutePath: String,
+            path: List<String>,
             permissions: Permissions = Permissions(
                 owner = emptySet(),
                 group = emptySet(),
                 other = emptySet(),
             ),
         ): TestDirectoryDefault {
-            return TestDirectoryDefault(absolutePath)
+            return TestDirectoryDefault(path)
         }
     }
 }

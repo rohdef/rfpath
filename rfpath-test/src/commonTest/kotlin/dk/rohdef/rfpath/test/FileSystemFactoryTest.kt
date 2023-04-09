@@ -42,7 +42,7 @@ class FileSystemFactoryTest : FunSpec({
             }
         }
 
-        val expected = TestDirectoryDefault.createUnsafe("/")
+        val expected = TestDirectoryDefault.createUnsafe(emptyList())
         expected.makeDirectory("bin")
             .shouldBeRight()
 
