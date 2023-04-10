@@ -3,10 +3,7 @@ package dk.rohdef.rfpath.test
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
-import dk.rohdef.rfpath.DirectoryError
-import dk.rohdef.rfpath.MakeDirectoryError
-import dk.rohdef.rfpath.MakeFileError
-import dk.rohdef.rfpath.Path
+import dk.rohdef.rfpath.*
 import dk.rohdef.rfpath.permissions.Permissions
 
 abstract class TestDirectory(
@@ -41,8 +38,10 @@ abstract class TestDirectory(
         return file.right()
     }
 
-    override suspend fun resolve(subpath: String): Either<DirectoryError, Path<*, *>> {
-        TODO("not implemented")
+    override suspend fun resolve(subpath: String): Either<ResolveError, Path<*, *>> {
+        return contents.get(subpath)
+            ?.right()
+            ?: ResolveError.ResourceNotFound("$absolutePath/$subpath").left()
     }
 
     override suspend fun setPermissions(permissions: Permissions): Either<DirectoryError, Path.Directory> {

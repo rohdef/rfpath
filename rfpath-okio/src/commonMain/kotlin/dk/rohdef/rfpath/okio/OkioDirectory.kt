@@ -50,12 +50,12 @@ class OkioDirectory private constructor(
     override suspend fun makeDirectory(directoryName: String): Either<MakeDirectoryError, Path.Directory> {
         val newDirectoryPath = path.resolve(directoryName)
 
-        try {
+        return try {
             fileSystem.createDirectories(newDirectoryPath, true)
-            return OkioDirectory(fileSystem, newDirectoryPath).right()
+            OkioDirectory(fileSystem, newDirectoryPath).right()
         } catch (exception: IOException) {
             if (exception.message?.contains("already exist") ?: false) {
-                return MakeDirectoryError.DirectoryExists(newDirectoryPath.toString()).left()
+                MakeDirectoryError.DirectoryExists(newDirectoryPath.toString()).left()
             } else {
                 throw exception
             }
@@ -71,17 +71,29 @@ class OkioDirectory private constructor(
         }
     }
 
-    override suspend fun resolve(subpath: String): Either<PathError<*>, Path<*, *>> {
+    override suspend fun resolve(subpath: String): Either<ResolveError, Path<*, *>> {
         val resolvedPath = path.resolve(subpath)
 
         val metadata = fileSystem.metadataOrNull(resolvedPath)
 
         return if (metadata == null) {
-            DirectoryInstance.EntityIsNonExisting(resolvedPath.toString()).left()
+            ResolveError.ResourceNotFound(resolvedPath.toString()).left()
         } else if (metadata.isDirectory) {
             directory(fileSystem, resolvedPath)
+                .mapLeft {
+                    when (it) {
+                        is DirectoryInstance.EntityIsAFile -> ResolveError.BadResourceResolved
+                        is DirectoryInstance.EntityIsNonExisting -> ResolveError.ResourceNotFound(resolvedPath.toString())
+                    }
+                }
         } else {
             OkioFile.file(fileSystem, resolvedPath)
+                .mapLeft {
+                    when (it) {
+                        is FileInstance.EntityIsADirectory -> ResolveError.BadResourceResolved
+                        is FileInstance.EntityIsNonExisting -> ResolveError.ResourceNotFound(resolvedPath.toString())
+                    }
+                }
         }
     }
 

@@ -1,7 +1,9 @@
 package dk.rohdef.rfpath.test
 
+import dk.rohdef.rfpath.DirectoryError
 import dk.rohdef.rfpath.MakeDirectoryError
 import dk.rohdef.rfpath.MakeFileError
+import dk.rohdef.rfpath.ResolveError
 import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.core.spec.style.FunSpec
@@ -96,9 +98,15 @@ class DirectoryTest : FunSpec({
             .shouldBeRight()
 
         // When
+        val fooResult = baseDirectory.resolve("foo")
+        val otherResult = baseDirectory.resolve("other")
 
         // Then
-        // TODO: 08/04/2023 rohdef - handle creation of directories
+        val foo = fooResult.shouldBeRight()
+        foo shouldBe TestFileDefault.createUnsafe(listOf("usr", "local", "foo"))
+
+        val other = otherResult.shouldBeLeft()
+        other shouldBe ResolveError.ResourceNotFound("/usr/local/other")
     }
 
     xtest("Reading current permissions") {

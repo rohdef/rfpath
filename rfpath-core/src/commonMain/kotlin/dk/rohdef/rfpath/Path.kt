@@ -52,7 +52,7 @@ sealed interface Path<T : Path<T, E>, E: PathError<T>> {
 
         suspend fun makeDirectory(directoryName: String): Either<MakeDirectoryError, Directory>
 
-        suspend fun resolve(subpath: String): Either<PathError<*>, Path<*, *>>
+        suspend fun resolve(subpath: String): Either<ResolveError, Path<*, *>>
     }
 
     interface File : Path<File, FileError> {

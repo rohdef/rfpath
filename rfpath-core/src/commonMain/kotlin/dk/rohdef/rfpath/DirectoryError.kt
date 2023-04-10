@@ -2,7 +2,11 @@ package dk.rohdef.rfpath
 
 sealed interface DirectoryError : PathError<Path.Directory>
 
-sealed interface ResolveError : DirectoryError
+sealed interface ResolveError : DirectoryError {
+    data class ResourceNotFound(val path: String): ResolveError
+
+    object BadResourceResolved: ResolveError
+}
 
 sealed interface MakeDirectoryError : DirectoryError {
     data class DirectoryExists(val path: String) : MakeDirectoryError
