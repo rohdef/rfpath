@@ -44,7 +44,7 @@ class TestFileDefault private constructor(
             permissions: Permissions = Permissions(
                 owner = setOf(Permission.READ, Permission.WRITE),
                 group = setOf(Permission.READ, Permission.WRITE),
-                other = emptySet(),
+                other = setOf(Permission.READ),
             )
         ): TestFileDefault {
             return TestFileDefault(path, permissions)

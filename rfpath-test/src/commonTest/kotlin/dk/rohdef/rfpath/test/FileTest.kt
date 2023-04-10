@@ -87,7 +87,7 @@ class FileTest : FunSpec({
         defaultPermissions shouldBe Permissions(
             owner = setOf(Permission.READ, Permission.WRITE),
             group = setOf(Permission.READ, Permission.WRITE),
-            other = emptySet(),
+            other = setOf(Permission.READ),
         )
         emptyPermissions shouldBe Permissions(
             owner = emptySet(),

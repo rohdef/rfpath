@@ -5,6 +5,8 @@ import dk.rohdef.rfpath.MakeFileError
 import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import io.kotest.matchers.collections.shouldContainInOrder
 import io.kotest.matchers.shouldBe
 
 class DirectoryTest : FunSpec({
@@ -54,21 +56,35 @@ class DirectoryTest : FunSpec({
                 MakeDirectoryError.DirectoryExists("/usr/local/bin")
     }
 
-    xtest("Listing elements in directory") {
+    test("Listing elements in directory") {
         // Given
-        val emptyDirectory = TestDirectoryDefault.createUnsafe(listOf("usr", "local"))
-        val directory = TODO("need structure to create complex directory first")
+        val emptyDirectory = TestDirectoryDefault.createUnsafe(listOf())
+        val directory = root {
+            directory("bin") {}
+            directory("etc") {}
+            directory("tmp") {}
+
+            file("buffer") {}
+            file("database.db") {}
+        }
 
         // When
         val emptyContentsResult = emptyDirectory.list()
-//        val contentsResult = directory.list()
+        val contentsResult = directory.list()
 
         // Then
-//        val emptyContents = emptyContentsResult.shouldBeRight()
-//        emptyContents shouldContainInOrder listOf()
+        val emptyContents = emptyContentsResult.shouldBeRight()
+        emptyContents shouldBe emptyList()
 
-//        val contents = contentsResult.shouldBeRight()
-//        contents shouldContainExactlyInAnyOrder listOf()
+        val contents = contentsResult.shouldBeRight()
+        contents shouldContainExactlyInAnyOrder listOf(
+            TestDirectoryDefault.createUnsafe(listOf("bin")),
+            TestDirectoryDefault.createUnsafe(listOf("etc")),
+            TestDirectoryDefault.createUnsafe(listOf("tmp")),
+
+            TestFileDefault.createUnsafe(listOf("buffer")),
+            TestFileDefault.createUnsafe(listOf("database.db")),
+        )
     }
 
     test("Resolve subelement") {
@@ -78,6 +94,10 @@ class DirectoryTest : FunSpec({
         )
         baseDirectory.makeFile("foo")
             .shouldBeRight()
+
+        // When
+
+        // Then
         // TODO: 08/04/2023 rohdef - handle creation of directories
     }
 

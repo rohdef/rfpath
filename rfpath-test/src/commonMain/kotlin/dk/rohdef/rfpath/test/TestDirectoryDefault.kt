@@ -29,7 +29,7 @@ class TestDirectoryDefault private constructor(
 
         return """
             {
-                "testDirectoryDefault-": {
+                "testDirectoryDefault": {
                     "absolutePath": "$absolutePath",
                     "permissions": {},
                     "contents": [

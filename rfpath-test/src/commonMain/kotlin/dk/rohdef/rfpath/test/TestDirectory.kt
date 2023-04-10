@@ -18,7 +18,7 @@ abstract class TestDirectory(
         get() = "/${path.joinToString("/")}"
 
     override suspend fun list(): Either<DirectoryError, List<Path<*, *>>> {
-        TODO("not implemented")
+        return contents.map { it.value }.right()
     }
 
     override suspend fun makeDirectory(directoryName: String): Either<MakeDirectoryError, TestDirectoryDefault> {
