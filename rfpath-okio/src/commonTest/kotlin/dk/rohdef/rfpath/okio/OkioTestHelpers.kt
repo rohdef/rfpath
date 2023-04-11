@@ -21,6 +21,7 @@ class OkioTestHelpers {
 
     val applicationDirectory = applicationDirectoryPath.toString()
     val workingDirectory = workingDirectoryPath.toString()
+    val rootDirectory = root.toString()
     val temporaryDirectory = temporaryDirectoryPath.toString()
 
     val dummySubDirectory = "folder"

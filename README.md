@@ -3,7 +3,10 @@
 A path utility based on [monadic operations](https://arrow-kt.io/)
 and with proper testing implementations.
 
-Currently this supports:
+This is inherently not thread safe due to the nature of file systems.
+A file system can at any time change without any warning.
+
+Currently, this supports:
 
 - Traversing directories
 - Reading and writing text to files
@@ -19,8 +22,6 @@ That said it is far from the level of general purpose at the moment.
 Major features in the TODO are
 (please see [Issues](https://github.com/rohdef/rfpath/issues?q=is%3Aopen%20is%3Aissue%20project%3Arohdef%2F3) for a complete list):
 
-- Reading/writing binary content to files
-- Creation of sub-directories
 - Streamed reading/writing of data from/to files
 - Handling of directory/file ownership
 - Testing implementations of error scenarios

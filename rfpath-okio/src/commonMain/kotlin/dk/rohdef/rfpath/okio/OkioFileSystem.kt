@@ -6,20 +6,23 @@ import arrow.core.right
 import com.soywiz.korio.util.UUID
 import dk.rohdef.rfpath.DirectoryInstance
 import dk.rohdef.rfpath.Path
-import dk.rohdef.rfpath.utility.PathUtility
+import dk.rohdef.rfpath.utility.FileSystem
 import dk.rohdef.rfpath.utility.PathUtilityError
 import kotlinx.cinterop.*
-import okio.FileSystem
+import okio.FileSystem as NativeFilesystem
 import okio.Path.Companion.toPath
 import platform.posix.PATH_MAX
 import platform.posix.readlink
 
-class OkioPathUtility private constructor(
-    private val fileSystem: FileSystem,
+class OkioFileSystem private constructor(
+    private val fileSystem: NativeFilesystem,
     private val applicationDirectory: okio.Path,
     private val workDirectory: okio.Path,
     private val temporaryDirectory: okio.Path,
-) : PathUtility {
+) : FileSystem {
+    override suspend fun root(): Either<DirectoryInstance, Path.Directory> =
+        OkioDirectory.directory(fileSystem, "/".toPath())
+
     override suspend fun applicationDirectory(): Either<DirectoryInstance, Path.Directory> =
         OkioDirectory.directory(fileSystem, applicationDirectory)
 
@@ -46,12 +49,12 @@ class OkioPathUtility private constructor(
 
     companion object {
         fun createPathUtility(
-            fileSystem: FileSystem = FileSystem.SYSTEM,
+            fileSystem: NativeFilesystem = NativeFilesystem.SYSTEM,
             applicationDirectory: okio.Path = applicationDirecrtory(),
             workDirectory: okio.Path = ".".toPath(),
-            temporaryDirectory: okio.Path = FileSystem.SYSTEM_TEMPORARY_DIRECTORY,
-        ): Either<Unit, PathUtility> {
-            return OkioPathUtility(
+            temporaryDirectory: okio.Path = NativeFilesystem.SYSTEM_TEMPORARY_DIRECTORY,
+        ): Either<Unit, FileSystem> {
+            return OkioFileSystem(
                 fileSystem,
                 applicationDirectory,
                 workDirectory,
@@ -60,11 +63,11 @@ class OkioPathUtility private constructor(
         }
 
         fun createPathUtilityUnsafe(
-            fileSystem: FileSystem = FileSystem.SYSTEM,
+            fileSystem: NativeFilesystem = NativeFilesystem.SYSTEM,
             applicationDirectory: okio.Path = applicationDirecrtory(),
             workDirectory: okio.Path = ".".toPath(),
-            temporaryDirectory: okio.Path = FileSystem.SYSTEM_TEMPORARY_DIRECTORY,
-        ): PathUtility {
+            temporaryDirectory: okio.Path = NativeFilesystem.SYSTEM_TEMPORARY_DIRECTORY,
+        ): FileSystem {
             val utility = createPathUtility(
                 fileSystem,
                 applicationDirectory,

@@ -1,6 +1,5 @@
 package dk.rohdef.rfpath.test
 
-import dk.rohdef.rfpath.DirectoryError
 import dk.rohdef.rfpath.MakeDirectoryError
 import dk.rohdef.rfpath.MakeFileError
 import dk.rohdef.rfpath.ResolveError
@@ -8,7 +7,6 @@ import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
-import io.kotest.matchers.collections.shouldContainInOrder
 import io.kotest.matchers.shouldBe
 
 class DirectoryTest : FunSpec({
