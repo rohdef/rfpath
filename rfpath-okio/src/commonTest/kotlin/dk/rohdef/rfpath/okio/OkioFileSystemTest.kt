@@ -7,11 +7,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldStartWith
 import io.kotest.matchers.types.shouldBeInstanceOf
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
-import kotlin.test.Test
 
-@ExperimentalCoroutinesApi
 class OkioFileSystemTest : FunSpec({
     coroutineTestScope = true
 

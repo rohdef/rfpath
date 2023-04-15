@@ -12,7 +12,7 @@ description = "Implementation of rfpath using okio (and a bit of korio)"
 configureCommon()
 publishToGithub()
 kotlin {
-    val okioVersion = "3.2.0"
+    val okioVersion = "3.3.0"
     sourceSets {
         val commonMain by getting {
             dependencies {
