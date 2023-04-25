@@ -5,11 +5,7 @@ import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 import okio.Path.Companion.toPath
-import kotlin.test.Ignore
-import kotlin.test.Test
 
 class OkioFileTest : FunSpec({
     coroutineTestScope = true
@@ -27,7 +23,7 @@ class OkioFileTest : FunSpec({
         testFile()
             .shouldBeRight()
 
-    context("Representation of file resources") {
+    context("Representation of a file") {
         test("successfully create file") {
             val file = testFile()
                 .shouldBeRight()

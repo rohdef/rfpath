@@ -27,6 +27,7 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 kotest()
+                implementation(project(":rfpath-test"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.3-native-mt")
 
                 implementation("com.squareup.okio:okio-fakefilesystem:$okioVersion")

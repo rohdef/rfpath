@@ -6,7 +6,8 @@ import dk.rohdef.rfpath.permissions.Permission
 import dk.rohdef.rfpath.permissions.Permissions
 
 suspend fun root(configure: DirectoryContext.() -> Unit): Path.Directory {
-    val rootDirectory = DirectoryContext(emptyList())
+    val builder: suspend (path: List<String>) -> TestDirectory = { TestDirectoryDefault.createUnsafe(it) }
+    val rootDirectory = DirectoryContext(emptyList(), builder)
     rootDirectory.configure()
 
     return rootDirectory.build()
@@ -14,6 +15,7 @@ suspend fun root(configure: DirectoryContext.() -> Unit): Path.Directory {
 
 class DirectoryContext(
     val path: List<String>,
+    var builder: suspend (path: List<String>) -> TestDirectory,
 ) {
     val directories = mutableMapOf<String, DirectoryContext>()
     val files = mutableMapOf<String, FileContext>()
@@ -25,7 +27,7 @@ class DirectoryContext(
     )
 
     fun directory(directoryName: String, configure: DirectoryContext.() -> Unit) {
-        val directory = DirectoryContext(path + directoryName)
+        val directory = DirectoryContext(path + directoryName, builder)
         directory.configure()
 
         directories.put(directoryName, directory)
@@ -39,7 +41,7 @@ class DirectoryContext(
     }
 
     suspend fun build(): TestDirectory {
-        return build { TestDirectoryDefault.createUnsafe(path) }
+        return build(builder)
     }
 
     private suspend fun build(builder: suspend (path: List<String>)->TestDirectory): TestDirectory {

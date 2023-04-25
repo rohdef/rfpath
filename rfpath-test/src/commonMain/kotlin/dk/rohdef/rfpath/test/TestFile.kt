@@ -6,12 +6,12 @@ import dk.rohdef.rfpath.FileError
 import dk.rohdef.rfpath.Path
 import dk.rohdef.rfpath.permissions.Permissions
 
-abstract class TestFile<T : TestFile<T>>(
+abstract class TestFile<SelfType : TestFile<SelfType>>(
     val path: List<String>,
     var permissions: Permissions,
 ) : Path.File {
     @Suppress("UNCHECKED_CAST")
-    private val self = (this as T)
+    private val self = (this as SelfType)
     var contents = ""
 
     override val absolutePath: String
@@ -21,12 +21,12 @@ abstract class TestFile<T : TestFile<T>>(
         return contents.right()
     }
 
-    override suspend fun write(text: String): Either<FileError, T> {
+    override suspend fun write(text: String): Either<FileError, SelfType> {
         contents = text
         return self.right()
     }
 
-    override suspend fun setPermissions(permissions: Permissions): Either<FileError, T> {
+    override suspend fun setPermissions(permissions: Permissions): Either<FileError, SelfType> {
         this.permissions = permissions
         return self.right()
     }

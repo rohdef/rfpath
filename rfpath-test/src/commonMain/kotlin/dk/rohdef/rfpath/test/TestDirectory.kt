@@ -6,7 +6,7 @@ import arrow.core.right
 import dk.rohdef.rfpath.*
 import dk.rohdef.rfpath.permissions.Permissions
 
-abstract class TestDirectory(
+abstract class TestDirectory<SelfType : TestDirectory<SelfType>>(
     val path: List<String>
 ) : Path.Directory {
     val contents = mutableMapOf<String, Path<*, *>>()
@@ -18,17 +18,9 @@ abstract class TestDirectory(
         return contents.map { it.value }.right()
     }
 
-    override suspend fun makeDirectory(directoryName: String): Either<MakeDirectoryError, TestDirectoryDefault> {
-        if (contents.containsKey(directoryName)) {
-            return MakeDirectoryError.DirectoryExists("$absolutePath/$directoryName").left()
-        }
+    override abstract suspend fun makeDirectory(directoryName: String): Either<MakeDirectoryError, SelfType>
 
-        val directory = TestDirectoryDefault.createUnsafe(path + directoryName)
-        contents.put(directoryName, directory)
-        return directory.right()
-    }
-
-    override suspend fun makeFile(fileName: String): Either<MakeFileError, TestFileDefault> {
+    override suspend fun makeFile(fileName: String): Either<MakeFileError, TestFile<*>> {
         if (contents.containsKey(fileName)) {
             return MakeFileError.FileExists("$absolutePath/$fileName").left()
         }
