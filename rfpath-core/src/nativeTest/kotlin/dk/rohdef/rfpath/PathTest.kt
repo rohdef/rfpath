@@ -1,20 +1,17 @@
 package dk.rohdef.rfpath
 
-import kotlin.test.Test
+import io.kotest.core.spec.style.FunSpec
 
-class PathTest {
+class PathTest : FunSpec({
     // TODO: 10/11/2022 rohdef - test default methods
-    class `Add permissions` {
-        @Test
-        fun `add permission`() {
+    context("Add permissions") {
+        test("add permission") {
         }
 
-        @Test
-        fun `permission already exists`() {
+        test("permission already exists") {
         }
 
-        @Test
-        fun `no permission to change permissions`() {
+        test("no permission to change permissions") {
         }
     }
-}
+})
