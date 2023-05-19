@@ -6,8 +6,11 @@ import arrow.core.right
 import com.soywiz.korio.file.VfsFile
 import com.soywiz.korio.file.getUnixPermission
 import com.soywiz.korio.file.setUnixPermission
-import com.soywiz.korio.file.std.LocalVfsNative
-import dk.rohdef.rfpath.*
+import com.soywiz.korio.file.std.localVfs
+import dk.rohdef.rfpath.FileError
+import dk.rohdef.rfpath.FileInstance
+import dk.rohdef.rfpath.MakeFileError
+import dk.rohdef.rfpath.Path
 import dk.rohdef.rfpath.permissions.Permissions
 import okio.FileSystem
 
@@ -15,6 +18,7 @@ class OkioFile private constructor(
     val fileSystem: FileSystem,
     val path: okio.Path,
 ) : Path.File {
+    override val fileName: String = path.name
     override val absolutePath: String = path.toString()
 
     override suspend fun setPermissions(permissions: Permissions): Either<FileError, Path.File> {
@@ -26,10 +30,12 @@ class OkioFile private constructor(
     override suspend fun currentPermissions(): Permissions {
         return vfs.getUnixPermission().toPermissions()
     }
-    private val vfs: VfsFile = VfsFile(LocalVfsNative(async = true), path.toString())
+    private val vfs: VfsFile = localVfs(path.toString(), true)
 
     override suspend fun readText(): Either<FileError, String> {
-        TODO("not implemented")
+        return fileSystem.read(path) {
+            readUtf8()
+        }.right()
     }
 
     override suspend fun write(text: String): Either<FileError, Path.File> {

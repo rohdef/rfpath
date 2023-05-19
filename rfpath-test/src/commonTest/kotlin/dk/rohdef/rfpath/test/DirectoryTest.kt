@@ -1,5 +1,6 @@
 package dk.rohdef.rfpath.test
 
+import arrow.core.nonEmptyListOf
 import dk.rohdef.rfpath.MakeDirectoryError
 import dk.rohdef.rfpath.MakeFileError
 import dk.rohdef.rfpath.ResolveError
@@ -27,8 +28,8 @@ class DirectoryTest : FunSpec({
         val file = fileResult.shouldBeRight()
         val file2 = file2Result.shouldBeRight()
 
-        file shouldBe TestFileDefault.createUnsafe(listOf("usr", "local", "foo"))
-        file2 shouldBe TestFileDefault.createUnsafe(listOf("usr", "local", "fish.sh"))
+        file shouldBe TestFileDefault.createUnsafe(nonEmptyListOf("usr", "local", "foo"))
+        file2 shouldBe TestFileDefault.createUnsafe(nonEmptyListOf("usr", "local", "fish.sh"))
         val fileExists = fileExistsResult.shouldBeLeft()
         fileExists shouldBe
                 MakeFileError.FileExists("/usr/local/foo")
@@ -66,7 +67,7 @@ class DirectoryTest : FunSpec({
 
             file("buffer") {}
             file("database.db") {}
-        }
+        }.shouldBeRight()
 
         // When
         val emptyContentsResult = emptyDirectory.list()
@@ -82,8 +83,8 @@ class DirectoryTest : FunSpec({
             TestDirectoryDefault.createUnsafe(listOf("etc")),
             TestDirectoryDefault.createUnsafe(listOf("tmp")),
 
-            TestFileDefault.createUnsafe(listOf("buffer")),
-            TestFileDefault.createUnsafe(listOf("database.db")),
+            TestFileDefault.createUnsafe(nonEmptyListOf("buffer")),
+            TestFileDefault.createUnsafe(nonEmptyListOf("database.db")),
         )
     }
 
@@ -101,7 +102,7 @@ class DirectoryTest : FunSpec({
 
         // Then
         val foo = fooResult.shouldBeRight()
-        foo shouldBe TestFileDefault.createUnsafe(listOf("usr", "local", "foo"))
+        foo shouldBe TestFileDefault.createUnsafe(nonEmptyListOf("usr", "local", "foo"))
 
         val other = otherResult.shouldBeLeft()
         other shouldBe ResolveError.ResourceNotFound("/usr/local/other")

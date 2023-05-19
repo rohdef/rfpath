@@ -8,7 +8,7 @@ import arrow.core.traverse
 import com.soywiz.korio.file.VfsFile
 import com.soywiz.korio.file.getUnixPermission
 import com.soywiz.korio.file.setUnixPermission
-import com.soywiz.korio.file.std.LocalVfsNative
+import com.soywiz.korio.file.std.localVfs
 import dk.rohdef.rfpath.*
 import dk.rohdef.rfpath.permissions.Permissions
 import okio.FileSystem
@@ -18,6 +18,7 @@ class OkioDirectory private constructor(
     private val fileSystem: FileSystem,
     private val path: okio.Path
 ) : Path.Directory {
+    override val directoryName: String = path.name.ifBlank { "/" }
     override val absolutePath: String = fileSystem.canonicalize(path).toString()
 
     override suspend fun setPermissions(permissions: Permissions): Either<DirectoryError, Path.Directory> {
@@ -30,7 +31,7 @@ class OkioDirectory private constructor(
         return vfs.getUnixPermission().toPermissions()
     }
 
-    private val vfs: VfsFile = VfsFile(LocalVfsNative(async = true), path.toString())
+    private val vfs: VfsFile = localVfs(path.toString(), true)
 
     override suspend fun list(): Either<PathError<*>, List<Path<*, *>>> {
         return fileSystem.list(path)

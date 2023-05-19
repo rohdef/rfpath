@@ -1,21 +1,22 @@
 package dk.rohdef.rfpath.test
 
 import arrow.core.Either
+import arrow.core.NonEmptyList
 import arrow.core.right
 import dk.rohdef.rfpath.FileError
 import dk.rohdef.rfpath.Path
 import dk.rohdef.rfpath.permissions.Permissions
 
 abstract class TestFile<SelfType : TestFile<SelfType>>(
-    val path: List<String>,
+    val path: NonEmptyList<String>,
     var permissions: Permissions,
 ) : Path.File {
     @Suppress("UNCHECKED_CAST")
     private val self = (this as SelfType)
     var contents = ""
 
-    override val absolutePath: String
-        get() = "/${path.joinToString("/")}"
+    override val fileName: String = path.last()
+    override val absolutePath: String = "/${path.joinToString("/")}"
 
     override suspend fun readText(): Either<FileError, String> {
         return contents.right()

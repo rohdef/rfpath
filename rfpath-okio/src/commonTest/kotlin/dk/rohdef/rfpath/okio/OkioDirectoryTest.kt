@@ -1,25 +1,24 @@
 package dk.rohdef.rfpath.okio
 
-import dk.rohdef.rfpath.DirectoryInstance
-import dk.rohdef.rfpath.MakeDirectoryError
-import dk.rohdef.rfpath.MakeFileError
+import dk.rohdef.rfpath.*
 import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldBeEmpty
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 import okio.Path.Companion.toPath
 
 class OkioDirectoryTest : FunSpec({
     coroutineTestScope = true
 
     val testHelpers = OkioTestHelpers()
-    val fileSystem = testHelpers.fileSystem()
 
-    fun testDirectory() =
-        OkioDirectory.directory(fileSystem, testHelpers.temporaryDirectoryPath)
+    suspend fun testDirectory() =
+        OkioDirectory.directory(testHelpers.fileSystem(), testHelpers.temporaryDirectoryPath)
 
-    fun testDirectoryUnwrapped() =
+    suspend fun testDirectoryUnwrapped() =
         testDirectory()
             .shouldBeRight()
 
@@ -36,7 +35,7 @@ class OkioDirectoryTest : FunSpec({
             val filePath = testHelpers.workingDirectoryPath
                 .resolve(testHelpers.dummyFilename1)
 
-            val error = OkioDirectory.directory(fileSystem, filePath)
+            val error = OkioDirectory.directory(testHelpers.fileSystem(), filePath)
                 .shouldBeLeft()
             error
                 .shouldBe(DirectoryInstance.EntityIsAFile(filePath.toString()))
@@ -44,7 +43,7 @@ class OkioDirectoryTest : FunSpec({
 
         test("Not a path should result in error") {
             val notAPath = "this is nonsense"
-            val directoryEither = OkioDirectory.directory(fileSystem, notAPath.toPath())
+            val directoryEither = OkioDirectory.directory(testHelpers.fileSystem(), notAPath.toPath())
 
             val directoryError = directoryEither
                 .shouldBeLeft()
@@ -62,12 +61,26 @@ class OkioDirectoryTest : FunSpec({
 
                 val contents = contentsFound
                     .shouldBeRight()
-                contents shouldBe listOf(TODO())
+
+                contents.filterIsInstance<Path.File>()
+                    .map { it.fileName }
+                    .shouldContainExactlyInAnyOrder(
+                        testHelpers.dummyFilename1,
+                        testHelpers.dummyFilename2,
+                        testHelpers.dummyFilename3,
+                    )
+                contents.filterIsInstance<Path.Directory>()
+                    .map { it.directoryName }
+                    .shouldContainExactlyInAnyOrder(
+                        testHelpers.dummySubDirectory,
+                    )
             }
 
             test("Listing from empty directory") {
-                TODO()
                 val directory = testDirectoryUnwrapped()
+                    .resolve(testHelpers.dummySubDirectory)
+                    .shouldBeRight()
+                    .shouldBeInstanceOf<Path.Directory>()
 
                 val contentsFound = directory.list()
 

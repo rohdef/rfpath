@@ -1,8 +1,6 @@
 package dk.rohdef.rfpath.test
 
-import arrow.core.Either
-import arrow.core.left
-import arrow.core.right
+import arrow.core.*
 import dk.rohdef.rfpath.*
 import dk.rohdef.rfpath.permissions.Permissions
 
@@ -11,8 +9,8 @@ abstract class TestDirectory<SelfType : TestDirectory<SelfType>>(
 ) : Path.Directory {
     val contents = mutableMapOf<String, Path<*, *>>()
 
-    override val absolutePath: String
-        get() = "/${path.joinToString("/")}"
+    override val directoryName: String = path.lastOrNone().getOrElse { "/" }
+    override val absolutePath: String = "/${path.joinToString("/")}"
 
     override suspend fun list(): Either<DirectoryError, List<Path<*, *>>> {
         return contents.map { it.value }.right()
@@ -25,7 +23,7 @@ abstract class TestDirectory<SelfType : TestDirectory<SelfType>>(
             return MakeFileError.FileExists("$absolutePath/$fileName").left()
         }
 
-        val file = TestFileDefault.createUnsafe(path + fileName)
+        val file = TestFileDefault.createUnsafe((path + fileName).toNonEmptyListOrNull()!!)
         contents.put(fileName, file)
         return file.right()
     }

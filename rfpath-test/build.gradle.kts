@@ -16,13 +16,13 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(project(":rfpath-core"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
             }
         }
         val commonTest by getting {
             dependencies {
                 kotest()
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.3-native-mt")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
             }
         }
     }

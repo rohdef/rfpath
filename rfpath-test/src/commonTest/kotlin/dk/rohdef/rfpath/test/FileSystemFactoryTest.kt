@@ -69,6 +69,8 @@ class FileSystemFactoryTest : FunSpec({
             echo "I am a fish!"
         """.trimIndent()
 
-        fileSystem shouldBe expected
+        fileSystem
+            .shouldBeRight()
+            .shouldBe(expected)
     }
 })

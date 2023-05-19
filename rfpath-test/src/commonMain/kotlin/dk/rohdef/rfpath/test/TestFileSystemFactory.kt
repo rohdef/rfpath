@@ -1,31 +1,65 @@
 package dk.rohdef.rfpath.test
 
-import arrow.core.getOrHandle
+import arrow.core.*
+import arrow.core.continuations.either
+import dk.rohdef.rfpath.DirectoryError
+import dk.rohdef.rfpath.MakeDirectoryError
+import dk.rohdef.rfpath.MakeFileError
 import dk.rohdef.rfpath.permissions.Permission
 import dk.rohdef.rfpath.permissions.Permissions
 
+// TODO fix variance
+typealias DirectoryBuilder<Accumulator> = suspend (accumulator: Accumulator, newDirectory: DirectoryContext<Accumulator>) -> Accumulator
+typealias FileBuilder<Accumulator> = suspend (accumulator: Accumulator, newFile: FileContext) -> Accumulator
+
 suspend fun root(
-    configure: DirectoryContext<TestDirectoryDefault>.() -> Unit,
-): TestDirectoryDefault {
-    val builder: suspend (path: List<String>) -> TestDirectoryDefault = { TestDirectoryDefault.createUnsafe(it) }
-    return root(configure, builder)
+    configure: DirectoryContext<Either<DirectoryError, TestDirectoryDefault>>.() -> Unit,
+): Either<DirectoryError, TestDirectoryDefault> {
+    val dbuilder: DirectoryBuilder<Either<DirectoryError, TestDirectoryDefault>>  =
+        { accumulator, directoryContext -> accumulator.flatMap { it.makeDirectory(directoryContext.path.last()) } }
+
+    val fbuilder: suspend (accumulator: Either<DirectoryError, TestDirectoryDefault>, fileContext: FileContext) -> Unit = { accumulator, fileContext ->
+        either {
+            val file = accumulator.bind()
+                .makeFile(fileContext.fileName)
+                .bind()
+
+            file.contents = fileContext.contents
+            file.permissions = fileContext.permissions
+        }
+    }
+
+    return root(
+        // TODO fix typing for either
+        TestDirectoryDefault.createUnsafe(emptyList()).right(),
+        dbuilder,
+        fbuilder,
+        configure,
+    )
 }
 
-suspend fun <D : TestDirectory<D>> root(
-    configure: DirectoryContext<D>.() -> Unit,
-    builder: suspend (path: List<String>) -> D,
-): D {
-    val rootDirectory = DirectoryContext(emptyList(), builder)
+suspend fun <Accumulator> root(
+    base: Accumulator,
+    directoryBuilder: DirectoryBuilder<Accumulator>,
+    fileBuilder: suspend (accumulator: Accumulator, newFile: FileContext) -> Unit,
+    configure: DirectoryContext<Accumulator>.() -> Unit,
+): Accumulator {
+    val rootDirectory = DirectoryContext(
+        emptyList(),
+        directoryBuilder,
+        fileBuilder,
+    )
     rootDirectory.configure()
 
-    return rootDirectory.build()
+    return rootDirectory.build(base)
 }
 
-class DirectoryContext<D : TestDirectory<D>>(
+class DirectoryContext<Accumulator>(
     val path: List<String>,
-    val builder: suspend (path: List<String>) -> D,
+    val directoryBuilder: DirectoryBuilder<Accumulator>,
+    val fileBuilder: suspend (accumulator: Accumulator, newFile: FileContext) -> Unit,
 ) {
-    val directories = mutableMapOf<String, DirectoryContext<D>>()
+    val directories = mutableMapOf<String, DirectoryContext<Accumulator>>()
     val files = mutableMapOf<String, FileContext>()
 
     var permissions = Permissions(
@@ -34,47 +68,46 @@ class DirectoryContext<D : TestDirectory<D>>(
         setOf(Permission.READ, Permission.EXECUTE),
     )
 
-    fun directory(directoryName: String, configure: DirectoryContext<D>.() -> Unit) {
-        val directory = DirectoryContext(path + directoryName, builder)
+    fun directory(directoryName: String, configure: DirectoryContext<Accumulator>.() -> Unit) {
+        if (directoryName.isEmpty()) throw IllegalArgumentException("Directory name cannot be empty")
+
+        val directory = DirectoryContext(
+            path + directoryName,
+            directoryBuilder,
+            fileBuilder,
+        )
         directory.configure()
 
         directories[directoryName] = directory
     }
 
     fun file(fileName: String, configure: FileContext.() -> Unit) {
-        val file = FileContext(path + fileName)
+        if (fileName.isEmpty()) throw IllegalArgumentException("File name cannot be empty")
+
+        val file = FileContext((path + fileName).toNonEmptyListOrNull()!!)
         file.configure()
 
         files[fileName] = file
     }
 
-    suspend fun build(): D {
-        return build(builder)
-    }
-
-    private suspend fun build(builder: suspend (path: List<String>) -> D): D {
-        val directory = builder(path)
-
-        directories.forEach { subDirectory ->
-            subDirectory.value.build {
-                directory.makeDirectory(subDirectory.key)
-                    .getOrHandle { throw RuntimeException("This is not possible in the test structure: $it") }
-            }
-        }
-        files.forEach { subFile ->
-            subFile.value.build {
-                directory.makeFile(subFile.key)
-                    .getOrHandle { throw RuntimeException("This is not possible in the test structure: $it") }
-            }
+    suspend fun build(accumulator: Accumulator): Accumulator {
+        directories.forEach {
+            it.value.build(directoryBuilder(accumulator, it.value))
         }
 
-        return directory
+        files.forEach {
+            fileBuilder(accumulator, it.value)
+        }
+
+        return accumulator
     }
 }
 
 class FileContext(
-    val path: List<String>,
+    val path: NonEmptyList<String>,
 ) {
+    val fileName = path.last()
+
     var contents = ""
 
     var permissions = Permissions(
@@ -82,13 +115,4 @@ class FileContext(
         setOf(Permission.READ, Permission.WRITE),
         setOf(Permission.READ),
     )
-
-    internal suspend fun build(builder: suspend (path: List<String>) -> TestFile<*>): TestFile<*> {
-        val file = builder(path)
-
-        file.contents = contents
-        file.permissions = permissions
-
-        return file
-    }
 }

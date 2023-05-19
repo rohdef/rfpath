@@ -3,6 +3,7 @@ package dk.rohdef.rfpath.okio
 import dk.rohdef.rfpath.FileInstance
 import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
+import io.kotest.common.runBlocking
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import okio.Path.Companion.toPath
@@ -11,7 +12,9 @@ class OkioFileTest : FunSpec({
     coroutineTestScope = true
 
     val testHelpers = OkioTestHelpers()
-    val fileSystem = testHelpers.fileSystem()
+    val fileSystem = runBlocking {
+        testHelpers.fileSystem()
+    }
 
     val testFile = testHelpers.temporaryDirectoryPath
         .resolve(testHelpers.dummyFilename1)

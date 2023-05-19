@@ -1,10 +1,11 @@
 package dk.rohdef.rfpath.test
 
+import arrow.core.NonEmptyList
 import dk.rohdef.rfpath.permissions.Permission
 import dk.rohdef.rfpath.permissions.Permissions
 
 class TestFileDefault private constructor(
-    path: List<String>,
+    path: NonEmptyList<String>,
     permissions: Permissions,
 ) : TestFile<TestFileDefault>(path, permissions) {
     override fun equals(other: Any?): Boolean {
@@ -40,7 +41,7 @@ class TestFileDefault private constructor(
 
     companion object {
         fun createUnsafe(
-            path: List<String>,
+            path: NonEmptyList<String>,
             permissions: Permissions = Permissions(
                 owner = setOf(Permission.READ, Permission.WRITE),
                 group = setOf(Permission.READ, Permission.WRITE),

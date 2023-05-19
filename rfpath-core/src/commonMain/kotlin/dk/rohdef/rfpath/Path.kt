@@ -46,6 +46,8 @@ sealed interface Path<T : Path<T, E>, E: PathError<T>> {
     suspend fun currentPermissions(): Permissions
 
     interface Directory : Path<Directory, DirectoryError> {
+        val directoryName: String
+
         suspend fun list(): Either<PathError<*>, List<Path<*, *>>>
 
         suspend fun makeFile(fileName: String): Either<MakeFileError, File>
@@ -56,6 +58,8 @@ sealed interface Path<T : Path<T, E>, E: PathError<T>> {
     }
 
     interface File : Path<File, FileError> {
+        val fileName: String
+
         suspend fun readText(): Either<FileError, String>
 
         suspend fun write(text: String): Either<FileError, File>

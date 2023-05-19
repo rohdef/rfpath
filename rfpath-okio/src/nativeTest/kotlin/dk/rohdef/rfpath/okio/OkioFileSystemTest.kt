@@ -3,6 +3,7 @@ package dk.rohdef.rfpath.okio
 import dk.rohdef.rfpath.Path
 import dk.rohdef.rfpath.utility.FileSystem
 import io.kotest.assertions.arrow.core.shouldBeRight
+import io.kotest.common.runBlocking
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldStartWith
@@ -12,7 +13,9 @@ class OkioFileSystemTest : FunSpec({
     coroutineTestScope = true
 
     val testHelpers = OkioTestHelpers()
-    val okioFileSystem = testHelpers.fileSystem()
+    val okioFileSystem = runBlocking {
+        testHelpers.fileSystem()
+    }
     val fileSystem: FileSystem = OkioFileSystem.createPathUtilityUnsafe(
         okioFileSystem,
         testHelpers.applicationDirectoryPath,

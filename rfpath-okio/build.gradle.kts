@@ -17,7 +17,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(project(":rfpath-core"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
 
                 implementation("com.soywiz.korlibs.korio:korio:3.3.1")
                 implementation("com.squareup.okio:okio:$okioVersion")
@@ -28,7 +28,7 @@ kotlin {
             dependencies {
                 kotest()
                 implementation(project(":rfpath-test"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.3-native-mt")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
 
                 implementation("com.squareup.okio:okio-fakefilesystem:$okioVersion")
             }
