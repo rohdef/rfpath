@@ -28,7 +28,6 @@ class OkioDirectoryTest : FunSpec({
                 .shouldBeRight()
             directory.absolutePath
                 .shouldBe(testHelpers.temporaryDirectory)
-
         }
 
         test("File should result in error") {
@@ -91,15 +90,24 @@ class OkioDirectoryTest : FunSpec({
             }
 
             test("Resolve directory") {
-                val directory = testDirectoryUnwrapped()
+                testDirectoryUnwrapped()
+                    .resolve(testHelpers.dummySubDirectory)
+                    .shouldBeRight()
+                    .shouldBeInstanceOf<Path.Directory>()
             }
 
             test("Resolve file") {
-                val directory = testDirectoryUnwrapped()
+                testDirectoryUnwrapped()
+                    .resolve(testHelpers.dummyFilename2)
+                    .shouldBeRight()
+                    .shouldBeInstanceOf<Path.File>()
             }
 
             test("Resolve non-existing") {
-                val directory = testDirectoryUnwrapped()
+                testDirectoryUnwrapped()
+                    .resolve("nonsense")
+                    .shouldBeLeft()
+                    .shouldBeInstanceOf<ResolveError.ResourceNotFound>()
             }
         }
 
