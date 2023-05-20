@@ -2,6 +2,7 @@ package dk.rohdef.rfpath.convention
 
 import org.gradle.api.*
 import org.gradle.kotlin.dsl.*
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 
 fun Project.configureCommon() {
@@ -26,13 +27,50 @@ fun Project.configureCommon() {
                 }
             }
 
-            val nativeMain by getting {
+            val linuxX64Main by getting {
                 dependencies {
-//                    implementation("io.github.microutils:kotlin-logging-linuxx64:$kotlinLoggingVersion")
+                    implementation("io.github.microutils:kotlin-logging-linuxx64:$kotlinLoggingVersion")
+                }
+            }
+
+            val macosX64Main by getting {
+                dependencies {
+                    implementation("io.github.microutils:kotlin-logging-macosx64:$kotlinLoggingVersion")
+                }
+            }
+
+            val macosArm64Main by getting {
+                dependencies {
                     implementation("io.github.microutils:kotlin-logging-macosarm64:$kotlinLoggingVersion")
                 }
             }
+
+//            val mingwX64Main by getting {
+//                dependencies {
+//                    implementation("io.github.microutils:kotlin-logging-mingwx64:$kotlinLoggingVersion")
+//                }
+//            }
+
+            val nativeMain by getting {
+                dependencies {
+                    implementation("io.arrow-kt:arrow-core:$arrowKtVersion")
+                }
+            }
         }
+    }
+}
+
+fun Project.nativeTarget() {
+    apply(plugin = "kotlin-multiplatform")
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    kotlin {
+        targetHierarchy.default()
+
+        linuxX64()
+        macosX64()
+        macosArm64()
+//        mingwX64()
     }
 }
 
@@ -44,20 +82,4 @@ fun KotlinDependencyHandler.kotest() {
     implementation("io.kotest:kotest-framework-datatest:$kotestVersion")
     implementation("io.kotest:kotest-framework-engine:$kotestVersion")
     implementation("io.kotest.extensions:kotest-assertions-arrow:$arrowKtVersionKotest")
-}
-
-fun Project.nativeTarget() {
-    apply(plugin = "kotlin-multiplatform")
-
-    kotlin {
-        val hostOs = System.getProperty("os.name")
-        val isMingwX64 = hostOs.startsWith("Windows")
-        val nativeTarget = when {
-            hostOs == "Mac OS X" -> macosArm64("native")
-//            hostOs == "Mac OS X" -> macosX64("native")
-            hostOs == "Linux" -> linuxX64("native")
-            isMingwX64 -> mingwX64("native")
-            else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
-        }
-    }
 }
