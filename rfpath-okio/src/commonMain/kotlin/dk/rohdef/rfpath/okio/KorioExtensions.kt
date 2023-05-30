@@ -1,8 +1,8 @@
 package dk.rohdef.rfpath.okio
 
-import com.soywiz.korio.file.Vfs
-import dk.rohdef.rfpath.permissions.Permissions
 import dk.rohdef.rfpath.permissions.Permission
+import dk.rohdef.rfpath.permissions.Permissions
+import korlibs.io.file.Vfs
 
 fun Vfs.UnixPermissions.toPermissions(): Permissions {
     return Permissions(

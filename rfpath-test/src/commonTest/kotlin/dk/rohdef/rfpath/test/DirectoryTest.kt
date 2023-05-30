@@ -4,11 +4,22 @@ import arrow.core.nonEmptyListOf
 import dk.rohdef.rfpath.MakeDirectoryError
 import dk.rohdef.rfpath.MakeFileError
 import dk.rohdef.rfpath.ResolveError
+import dk.rohdef.rfpath.permissions.Permission
+import dk.rohdef.rfpath.permissions.Permissions
+import dk.rohdef.rfpath.permissions.UserGroup
 import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.collections.shouldContain
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
+import io.kotest.property.Arb
+import io.kotest.property.Exhaustive
+import io.kotest.property.arbitrary.element
+import io.kotest.property.checkAll
+import io.kotest.property.exhaustive.enum
+import io.kotest.property.exhaustive.exhaustive
 
 class DirectoryTest : FunSpec({
     coroutineTestScope = true
@@ -108,15 +119,104 @@ class DirectoryTest : FunSpec({
         other shouldBe ResolveError.ResourceNotFound("/usr/local/other")
     }
 
-    xtest("Reading current permissions") {
-        // Given
-        // TODO Use test generators to do exhaustive testing
+
+    test("Reading current permissions") {
+        val all = Permission.values().toSet()
+            .powerSet()
+            .toList()
+            .exhaustive()
+        checkAll(all, all, all) { owner, group, other ->
+            val directory = TestDirectoryDefault.createUnsafe(
+                listOf(),
+                Permissions(
+                    owner,
+                    group,
+                    other,
+                )
+            )
+
+            val permissions = directory.currentPermissions()
+
+            permissions.owner shouldContainExactly owner
+            permissions.group shouldContainExactly group
+            permissions.other shouldContainExactly other
+        }
     }
 
-    xtest("Setting new permissions") {
-        // Given
-        val baseDirectory = TestDirectoryDefault.createUnsafe(
-            listOf("usr", "local"),
-        )
+    test("Adding permissions") {
+        val all = Permission.values().toSet()
+            .powerSet()
+            .toList()
+            .exhaustive()
+
+        checkAll(all, all, all, Exhaustive.enum<UserGroup>(), Exhaustive.enum<Permission>()) { owner, group, other, userGroup, permission ->
+            val directory = TestDirectoryDefault.createUnsafe(
+                listOf(),
+                Permissions(
+                    owner,
+                    group,
+                    other,
+                )
+            )
+
+            directory.addPermission(userGroup, permission)
+                .shouldBeRight()
+            val permissions = directory.currentPermissions()
+
+            when (userGroup) {
+                UserGroup.OWNER -> {
+                    permissions.owner shouldContainExactly (owner + permission)
+                    permissions.group shouldContainExactly group
+                    permissions.other shouldContainExactly other
+                }
+                UserGroup.GROUP -> {
+                    permissions.owner shouldContainExactly owner
+                    permissions.group shouldContainExactly (group + permission)
+                    permissions.other shouldContainExactly other
+                }
+                UserGroup.OTHER -> {
+                    permissions.owner shouldContainExactly owner
+                    permissions.group shouldContainExactly group
+                    permissions.other shouldContainExactly (other + permission)
+                }
+            }
+        }
+    }
+
+    test("Setting new permissions") {
+        val all = Permission.values().toSet()
+            .powerSet()
+            .toList()
+            .exhaustive()
+        val some = Permission.values().toSet()
+            .powerSet()
+            .let { Arb.element(it) }
+        checkAll(
+            all, all, all,
+            some, some, some,
+        ) { owner, group, other, newOwner, newGroup, newOther ->
+            val directory = TestDirectoryDefault.createUnsafe(
+                listOf(),
+                Permissions(
+                    owner,
+                    group,
+                    other,
+                ),
+            )
+
+            directory.setPermissions(
+                Permissions(
+                    newOwner,
+                    newGroup,
+                    newOther,
+                ),
+            )
+                .shouldBeRight()
+            val permissions = directory.currentPermissions()
+
+            permissions.owner shouldContainExactly newOwner
+            permissions.group shouldContainExactly newGroup
+            permissions.other shouldContainExactly newOther
+        }
     }
 })

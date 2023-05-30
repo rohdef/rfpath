@@ -5,12 +5,12 @@ import arrow.core.continuations.either
 import arrow.core.left
 import arrow.core.right
 import arrow.core.traverse
-import com.soywiz.korio.file.VfsFile
-import com.soywiz.korio.file.getUnixPermission
-import com.soywiz.korio.file.setUnixPermission
-import com.soywiz.korio.file.std.localVfs
 import dk.rohdef.rfpath.*
 import dk.rohdef.rfpath.permissions.Permissions
+import korlibs.io.file.VfsFile
+import korlibs.io.file.getUnixPermission
+import korlibs.io.file.setUnixPermission
+import korlibs.io.file.std.localVfs
 import okio.FileSystem
 import okio.IOException
 

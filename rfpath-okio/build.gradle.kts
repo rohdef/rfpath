@@ -7,7 +7,7 @@ plugins {
     id("io.kotest.multiplatform") version "5.5.5"
 }
 
-description = "Implementation of rfpath using okio (and a bit of korio)"
+description = "Implementation of rfpath using okio (and temporarily a bit of korio)"
 
 configureCommon()
 publishToGithub()
@@ -19,7 +19,7 @@ kotlin {
                 implementation(project(":rfpath-core"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
 
-                implementation("com.soywiz.korlibs.korio:korio:3.3.1")
+                implementation("com.soywiz.korlibs.korio:korio:4.0.2")
                 implementation("com.squareup.okio:okio:$okioVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
             }

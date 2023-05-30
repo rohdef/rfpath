@@ -3,15 +3,15 @@ package dk.rohdef.rfpath.okio
 import arrow.core.Either
 import arrow.core.left
 import arrow.core.right
-import com.soywiz.korio.file.VfsFile
-import com.soywiz.korio.file.getUnixPermission
-import com.soywiz.korio.file.setUnixPermission
-import com.soywiz.korio.file.std.localVfs
 import dk.rohdef.rfpath.FileError
 import dk.rohdef.rfpath.FileInstance
 import dk.rohdef.rfpath.MakeFileError
 import dk.rohdef.rfpath.Path
 import dk.rohdef.rfpath.permissions.Permissions
+import korlibs.io.file.VfsFile
+import korlibs.io.file.getUnixPermission
+import korlibs.io.file.setUnixPermission
+import korlibs.io.file.std.localVfs
 import okio.FileSystem
 
 class OkioFile private constructor(

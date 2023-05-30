@@ -5,7 +5,8 @@ import dk.rohdef.rfpath.*
 import dk.rohdef.rfpath.permissions.Permissions
 
 abstract class TestDirectory<SelfType : TestDirectory<SelfType>>(
-    val path: List<String>
+    val path: List<String>,
+    var permissions: Permissions,
 ) : Path.Directory {
     val contents = mutableMapOf<String, Path<*, *>>()
 
@@ -35,10 +36,9 @@ abstract class TestDirectory<SelfType : TestDirectory<SelfType>>(
     }
 
     override suspend fun setPermissions(permissions: Permissions): Either<DirectoryError, Path.Directory> {
-        TODO("not implemented")
+        this.permissions = permissions
+        return this.right()
     }
 
-    override suspend fun currentPermissions(): Permissions {
-        TODO("not implemented")
-    }
+    override suspend fun currentPermissions(): Permissions = permissions
 }

@@ -45,6 +45,12 @@ fun Project.configureCommon() {
                 }
             }
 
+            val jvmMain by getting {
+                dependencies {
+                    implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+                }
+            }
+
 //            val mingwX64Main by getting {
 //                dependencies {
 //                    implementation("io.github.microutils:kotlin-logging-mingwx64:$kotlinLoggingVersion")
@@ -67,6 +73,7 @@ fun Project.nativeTarget() {
     kotlin {
         targetHierarchy.default()
 
+        jvm()
         linuxX64()
         macosX64()
         macosArm64()
