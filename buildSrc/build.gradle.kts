@@ -18,4 +18,5 @@ repositories {
 dependencies {
     val kotlinVersion = "1.8.21"
     implementation(kotlin("gradle-plugin", kotlinVersion))
+    implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.8.20")
 }
