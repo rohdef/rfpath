@@ -29,10 +29,26 @@ abstract class TestDirectory<SelfType : TestDirectory<SelfType>>(
         return file.right()
     }
 
-    override suspend fun resolve(subpath: String): Either<ResolveError, Path<*, *>> {
-        return contents.get(subpath)
-            ?.right()
-            ?: ResolveError.ResourceNotFound("$absolutePath/$subpath").left()
+    override suspend fun resolve(vararg subpath: String): Either<ResolveError, Path<*, *>> {
+        val path = subpath.toList()
+        val first = path.first()
+        val rest = path.subList(1, path.size)
+
+
+        val firstPart = contents.get(first)
+                ?.right()
+                ?: ResolveError.ResourceNotFound("$absolutePath/$first").left()
+
+        return if (rest.size > 0)  {
+             firstPart.flatMap {
+                 return when (it) {
+                     is Path.Directory -> it.resolve(*rest.toTypedArray())
+                     is Path.File -> ResolveError.BadResourceResolved.left()
+                 }
+             }
+        } else {
+            firstPart
+        }
     }
 
     override suspend fun setPermissions(permissions: Permissions): Either<DirectoryError, Path.Directory> {

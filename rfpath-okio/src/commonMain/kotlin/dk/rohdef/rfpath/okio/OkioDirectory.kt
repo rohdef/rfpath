@@ -72,8 +72,8 @@ class OkioDirectory private constructor(
         }
     }
 
-    override suspend fun resolve(subpath: String): Either<ResolveError, Path<*, *>> {
-        val resolvedPath = path.resolve(subpath)
+    override suspend fun resolve(vararg subpath: String): Either<ResolveError, Path<*, *>> {
+        val resolvedPath = path.resolve(subpath.joinToString("/"))
 
         val metadata = fileSystem.metadataOrNull(resolvedPath)
 

@@ -4,6 +4,9 @@ import arrow.core.Either
 import dk.rohdef.rfpath.DirectoryInstance
 import dk.rohdef.rfpath.Path
 
+/**
+ * Represents access to the file system giving access to the most common paths
+ */
 interface FileSystem {
     suspend fun createTemporaryFile(): Either<PathUtilityError.CreateTemporaryFileError, Path.File>
 

@@ -11,6 +11,7 @@ description = "Path library to handle basic file system IO"
 
 configureCommon()
 publishToGithub()
+
 kotlin {
     sourceSets {
         val commonMain by getting {

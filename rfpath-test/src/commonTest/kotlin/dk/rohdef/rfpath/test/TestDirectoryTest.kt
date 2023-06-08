@@ -10,7 +10,6 @@ import dk.rohdef.rfpath.permissions.UserGroup
 import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.shouldBe
@@ -21,7 +20,7 @@ import io.kotest.property.checkAll
 import io.kotest.property.exhaustive.enum
 import io.kotest.property.exhaustive.exhaustive
 
-class DirectoryTest : FunSpec({
+class TestDirectoryTest : FunSpec({
     coroutineTestScope = true
 
     test("Make file") {
