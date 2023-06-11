@@ -7,6 +7,7 @@ import dk.rohdef.rfpath.ResolveError
 import dk.rohdef.rfpath.permissions.Permission
 import dk.rohdef.rfpath.permissions.Permissions
 import dk.rohdef.rfpath.permissions.UserGroup
+import dk.rohdef.rfpath.test.builders.root
 import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.core.spec.style.FunSpec

@@ -2,6 +2,8 @@ package dk.rohdef.rfpath.test
 
 import dk.rohdef.rfpath.permissions.Permission
 import dk.rohdef.rfpath.permissions.Permissions
+import dk.rohdef.rfpath.test.builders.fileSystem
+import dk.rohdef.rfpath.test.builders.root
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
