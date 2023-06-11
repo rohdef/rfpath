@@ -77,7 +77,7 @@ class TestDirectoryTest : FunSpec({
 
             file("buffer") {}
             file("database.db") {}
-        }.shouldBeRight()
+        }
 
         // When
         val emptyContentsResult = emptyDirectory.list()

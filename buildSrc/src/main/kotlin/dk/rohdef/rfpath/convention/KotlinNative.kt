@@ -81,12 +81,35 @@ fun Project.nativeTarget() {
     }
 }
 
-fun KotlinDependencyHandler.kotest() {
+fun  Project.kotest() {
+//    apply(plugin = "kotlin-multiplatform")
+
     val kotestVersion = "5.6.2"
     val arrowKtVersionKotest = "1.3.3"
 
-    implementation("io.kotest:kotest-assertions-core:$kotestVersion")
-    implementation("io.kotest:kotest-framework-datatest:$kotestVersion")
-    implementation("io.kotest:kotest-framework-engine:$kotestVersion")
-    implementation("io.kotest.extensions:kotest-assertions-arrow:$arrowKtVersionKotest")
+    kotlin {
+        jvm {
+            testRuns["test"].executionTask.configure {
+                useJUnitPlatform()
+            }
+        }
+
+        sourceSets {
+            val commonTest by getting {
+                dependencies {
+                    implementation("io.kotest:kotest-assertions-core:$kotestVersion")
+                    implementation("io.kotest:kotest-framework-datatest:$kotestVersion")
+                    implementation("io.kotest:kotest-framework-engine:$kotestVersion")
+                    implementation("io.kotest.extensions:kotest-assertions-arrow:$arrowKtVersionKotest")
+                }
+            }
+
+            val jvmTest by getting {
+                dependencies {
+                    implementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+                }
+            }
+        }
+    }
+
 }

@@ -4,8 +4,8 @@ import dk.rohdef.rfpath.permissions.Permission
 import dk.rohdef.rfpath.permissions.Permissions
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldStartWith
 
 class FileSystemFactoryTest : FunSpec({
     coroutineTestScope = true
@@ -70,7 +70,49 @@ class FileSystemFactoryTest : FunSpec({
         """.trimIndent()
 
         fileSystem
-            .shouldBeRight()
             .shouldBe(expected)
+    }
+
+    test("handling of system directories") {
+        val filesystem = fileSystem {
+            root {
+                directory("bin") {
+                    directory("gourmet") {
+                        application(this)
+                    }
+                }
+
+                directory("home") {
+                    directory("camilla") {
+                        workDirectory(this)
+                    }
+                }
+
+                directory("tmp") {
+                    temporary(this)
+
+                    directory("local") { }
+                }
+            }
+        }
+
+        val root = filesystem.root()
+            .shouldBeRight()
+        root.directoryName shouldBe "/"
+        root.absolutePath shouldBe "/"
+
+        val app = filesystem.applicationDirectory()
+            .shouldBeRight()
+        app.directoryName shouldBe "gourmet"
+        app.absolutePath shouldBe "/bin/gourmet"
+
+        val work = filesystem.workDirectory()
+            .shouldBeRight()
+        work.directoryName shouldBe "camilla"
+        work.absolutePath shouldBe "/home/camilla"
+
+        val tmpFile = filesystem.createTemporaryFile()
+            .shouldBeRight()
+        tmpFile.absolutePath shouldStartWith "/tmp/"
     }
 })

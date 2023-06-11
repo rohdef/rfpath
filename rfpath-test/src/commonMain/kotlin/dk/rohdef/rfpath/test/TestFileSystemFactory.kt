@@ -1,39 +1,117 @@
 package dk.rohdef.rfpath.test
 
-import arrow.core.*
-import arrow.core.continuations.either
-import dk.rohdef.rfpath.DirectoryError
-import dk.rohdef.rfpath.MakeDirectoryError
-import dk.rohdef.rfpath.MakeFileError
+import arrow.core.NonEmptyList
+import arrow.core.getOrElse
+import arrow.core.toNonEmptyListOrNull
+import dk.rohdef.rfpath.Path
 import dk.rohdef.rfpath.permissions.Permission
 import dk.rohdef.rfpath.permissions.Permissions
+import dk.rohdef.rfpath.utility.FileSystem
+
+suspend fun <Accumulator : Path.Directory> fileSystem(
+    base: Accumulator,
+    directoryBuilder: DirectoryBuilder<Accumulator>,
+    fileBuilder: FileBuilder<Accumulator>,
+    configure: suspend FileSystemRoot<Accumulator>.() -> Unit,
+): FileSystem {
+    val fs = FileSystemRoot(
+        base,
+        directoryBuilder,
+        fileBuilder,
+    )
+    fs.configure()
+
+    return fs.build()
+}
+
+suspend fun fileSystem(configure: suspend FileSystemRoot<TestDirectoryDefault>.() -> Unit): FileSystem {
+    return fileSystem(
+        TestDirectoryDefault.createUnsafe(emptyList()),
+        defaultDirectoryBuilder,
+        defaultFileBuilder,
+        configure,
+    )
+}
+
+val defaultDirectoryBuilder: DirectoryBuilder<TestDirectoryDefault> = { accumulator, directoryContext ->
+    accumulator.makeDirectory(directoryContext.path.last())
+        .getOrElse { throw IllegalStateException(it.toString()) }
+}
+
+val defaultFileBuilder: FileBuilder<TestDirectoryDefault> = { accumulator, fileContext ->
+    val file = accumulator
+        .makeFile(fileContext.fileName)
+        .getOrElse { throw IllegalStateException(it.toString()) }
+
+    file.contents = fileContext.contents
+    file.permissions = fileContext.permissions
+}
+
+class FileSystemRoot<DirectoryType : Path.Directory>(
+    private val base: DirectoryType,
+    private val directoryBuilder: DirectoryBuilder<DirectoryType>,
+    private val fileBuilder: FileBuilder<DirectoryType>,
+) {
+    private val application = SetExactlyOnce<DirectoryType>()
+    private var workDirectory = SetExactlyOnce<DirectoryType>()
+    private var temporary = SetExactlyOnce<DirectoryType>()
+    private lateinit var root: DirectoryType
+
+    fun application(me: DirectoryContext<DirectoryType>) = me.addPostBuilder(application::setValue)
+    fun workDirectory(me: DirectoryContext<DirectoryType>) = me.addPostBuilder(workDirectory::setValue)
+    fun temporary(me: DirectoryContext<DirectoryType>) = me.addPostBuilder(temporary::setValue)
+
+    suspend fun root(
+        configure: DirectoryContext<DirectoryType>.() -> Unit,
+    ) {
+        root = root(
+            base,
+            directoryBuilder,
+            fileBuilder,
+            configure,
+        )
+    }
+
+    fun build(): FileSystem {
+        return TestFileSystem(
+            root,
+            application.value,
+            workDirectory.value,
+            temporary.value,
+        )
+    }
+}
+
+// TODO this is not thread safe
+private data class SetExactlyOnce<T>(
+    private var _value: T? = null
+) {
+    val value: T
+        get() {
+            return _value ?: throw IllegalStateException("Value must be set")
+        }
+
+    fun setValue(value: T) {
+        if (_value == null) {
+            _value = value
+        } else {
+            throw IllegalStateException("Value has already been set")
+        }
+    }
+}
+
 
 // TODO fix variance
 typealias DirectoryBuilder<Accumulator> = suspend (accumulator: Accumulator, newDirectory: DirectoryContext<Accumulator>) -> Accumulator
-typealias FileBuilder<Accumulator> = suspend (accumulator: Accumulator, newFile: FileContext) -> Accumulator
+typealias FileBuilder<Accumulator> = suspend (accumulator: Accumulator, newFile: FileContext) -> Unit
 
 suspend fun root(
-    configure: DirectoryContext<Either<DirectoryError, TestDirectoryDefault>>.() -> Unit,
-): Either<DirectoryError, TestDirectoryDefault> {
-    val dbuilder: DirectoryBuilder<Either<DirectoryError, TestDirectoryDefault>>  =
-        { accumulator, directoryContext -> accumulator.flatMap { it.makeDirectory(directoryContext.path.last()) } }
-
-    val fbuilder: suspend (accumulator: Either<DirectoryError, TestDirectoryDefault>, fileContext: FileContext) -> Unit = { accumulator, fileContext ->
-        either {
-            val file = accumulator.bind()
-                .makeFile(fileContext.fileName)
-                .bind()
-
-            file.contents = fileContext.contents
-            file.permissions = fileContext.permissions
-        }
-    }
-
+    configure: DirectoryContext<TestDirectoryDefault>.() -> Unit,
+): TestDirectoryDefault {
     return root(
-        // TODO fix typing for either
-        TestDirectoryDefault.createUnsafe(emptyList()).right(),
-        dbuilder,
-        fbuilder,
+        TestDirectoryDefault.createUnsafe(emptyList()),
+        defaultDirectoryBuilder,
+        defaultFileBuilder,
         configure,
     )
 }
@@ -41,7 +119,7 @@ suspend fun root(
 suspend fun <Accumulator> root(
     base: Accumulator,
     directoryBuilder: DirectoryBuilder<Accumulator>,
-    fileBuilder: suspend (accumulator: Accumulator, newFile: FileContext) -> Unit,
+    fileBuilder: FileBuilder<Accumulator>,
     configure: DirectoryContext<Accumulator>.() -> Unit,
 ): Accumulator {
     val rootDirectory = DirectoryContext(
@@ -57,7 +135,7 @@ suspend fun <Accumulator> root(
 class DirectoryContext<Accumulator>(
     val path: List<String>,
     val directoryBuilder: DirectoryBuilder<Accumulator>,
-    val fileBuilder: suspend (accumulator: Accumulator, newFile: FileContext) -> Unit,
+    val fileBuilder: FileBuilder<Accumulator>,
 ) {
     val directories = mutableMapOf<String, DirectoryContext<Accumulator>>()
     val files = mutableMapOf<String, FileContext>()
@@ -67,6 +145,12 @@ class DirectoryContext<Accumulator>(
         setOf(Permission.READ, Permission.EXECUTE),
         setOf(Permission.READ, Permission.EXECUTE),
     )
+
+    private val postBuilders: MutableList<(Accumulator) -> Unit> = mutableListOf()
+
+    fun addPostBuilder(postBuilder: (Accumulator) -> Unit) {
+        postBuilders.add(postBuilder)
+    }
 
     fun directory(directoryName: String, configure: DirectoryContext<Accumulator>.() -> Unit) {
         if (directoryName.isEmpty()) throw IllegalArgumentException("Directory name cannot be empty")
@@ -98,6 +182,8 @@ class DirectoryContext<Accumulator>(
         files.forEach {
             fileBuilder(accumulator, it.value)
         }
+
+        postBuilders.forEach { it(accumulator) }
 
         return accumulator
     }

@@ -10,6 +10,7 @@ plugins {
 description = "Testing implementations to enable testing with the path library rfpath"
 
 configureCommon()
+kotest()
 publishToGithub()
 kotlin {
     sourceSets {
@@ -21,7 +22,6 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
-                kotest()
                 val kotestVersion = "5.6.2"
                 implementation("io.kotest:kotest-property:$kotestVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
