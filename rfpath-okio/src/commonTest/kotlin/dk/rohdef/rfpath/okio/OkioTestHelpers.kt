@@ -1,7 +1,7 @@
 package dk.rohdef.rfpath.okio
 
-import dk.rohdef.rfpath.test.DirectoryContext
-import dk.rohdef.rfpath.test.root
+import dk.rohdef.rfpath.test.builders.DirectoryContext
+import dk.rohdef.rfpath.test.builders.root
 import okio.FileSystem
 import okio.Path
 import okio.Path.Companion.toPath

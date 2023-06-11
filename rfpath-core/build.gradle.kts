@@ -4,12 +4,12 @@ import dk.rohdef.rfpath.convention.publishToGithub
 
 plugins {
     kotlin("multiplatform")
-    id("io.kotest.multiplatform") version "5.6.2"
 }
 
 description = "Path library to handle basic file system IO"
 
 configureCommon()
+kotest()
 publishToGithub()
 
 kotlin {
@@ -21,7 +21,6 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
-                kotest()
                 implementation(project(":rfpath-test"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
             }

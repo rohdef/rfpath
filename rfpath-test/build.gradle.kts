@@ -4,7 +4,6 @@ import dk.rohdef.rfpath.convention.publishToGithub
 
 plugins {
     kotlin("multiplatform")
-    id("io.kotest.multiplatform") version "5.5.5"
 }
 
 description = "Testing implementations to enable testing with the path library rfpath"
@@ -12,6 +11,7 @@ description = "Testing implementations to enable testing with the path library r
 configureCommon()
 kotest()
 publishToGithub()
+
 kotlin {
     sourceSets {
         val commonMain by getting {

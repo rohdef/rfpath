@@ -82,7 +82,7 @@ fun Project.nativeTarget() {
 }
 
 fun  Project.kotest() {
-//    apply(plugin = "kotlin-multiplatform")
+    apply(plugin = "io.kotest.multiplatform")
 
     val kotestVersion = "5.6.2"
     val arrowKtVersionKotest = "1.3.3"

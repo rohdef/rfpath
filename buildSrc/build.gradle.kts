@@ -13,10 +13,12 @@ plugins {
 
 repositories {
     mavenCentral()
+    gradlePluginPortal()
 }
 
 dependencies {
     val kotlinVersion = "1.8.21"
     implementation(kotlin("gradle-plugin", kotlinVersion))
     implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.8.20")
+    implementation("io.kotest:kotest-framework-multiplatform-plugin-gradle:5.6.2")
 }

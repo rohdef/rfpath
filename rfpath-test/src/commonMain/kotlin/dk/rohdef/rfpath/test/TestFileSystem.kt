@@ -18,6 +18,7 @@ class TestFileSystem(
     override suspend fun root(): Either<DirectoryInstance, Path.Directory> = root.right()
 
     override suspend fun createTemporaryFile(): Either<PathUtilityError.CreateTemporaryFileError, Path.File> {
+        // TODO this is terrible
         return temporary.makeFile("yay")
             .getOrElse { throw IllegalStateException("") }
             .right()

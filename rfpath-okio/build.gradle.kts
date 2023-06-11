@@ -4,13 +4,14 @@ import dk.rohdef.rfpath.convention.publishToGithub
 
 plugins {
     kotlin("multiplatform")
-    id("io.kotest.multiplatform") version "5.5.5"
 }
 
 description = "Implementation of rfpath using okio (and temporarily a bit of korio)"
 
 configureCommon()
+kotest()
 publishToGithub()
+
 kotlin {
     val okioVersion = "3.3.0"
     sourceSets {
@@ -26,7 +27,6 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
-                kotest()
                 implementation(project(":rfpath-test"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1")
 
