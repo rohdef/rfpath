@@ -31,11 +31,9 @@ class OkioFileSystem(
                 .mapLeft { PathUtilityError.CreateTemporaryFileError.CannotGetTemporaryDirectory }
                 .bind()
             val uuid = UUID.randomUUID().toString()
-            // TODO: 29/10/2022 rohdef - get actual app name
-            val applicationName = "gourmet"
 
             directory
-                .makeFile("${applicationName}-${uuid}")
+                .makeFile("${uuid}")
                 .mapLeft { PathUtilityError.CreateTemporaryFileError.CannotCreateFile }
                 .bind()
 

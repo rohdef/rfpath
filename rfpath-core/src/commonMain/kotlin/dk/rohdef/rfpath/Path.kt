@@ -7,6 +7,10 @@ import dk.rohdef.rfpath.permissions.Permission
 import dk.rohdef.rfpath.permissions.Permissions
 import dk.rohdef.rfpath.permissions.UserGroup
 
+/**
+ * Basic path components such as a File or Directory.
+ * See the Path.Directory and Path.File interfaces that has these common abstractions
+ */
 sealed interface Path<T : Path<T, E>, E: PathError<T>> {
     val absolutePath: String
 

@@ -1,7 +1,9 @@
 package dk.rohdef.rfpath.okio
 
+import dk.rohdef.rfpath.MakeFileError
 import dk.rohdef.rfpath.Path
 import dk.rohdef.rfpath.utility.FileSystem
+import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.common.runBlocking
 import io.kotest.core.spec.style.FunSpec
@@ -31,6 +33,27 @@ class OkioFileSystemTest : FunSpec({
             .shouldBeInstanceOf<Path.File>()
         file.absolutePath
             .shouldStartWith(testHelpers.temporaryDirectory)
+    }
+
+    test("create named temporary file") {
+        val fileName = "my-fancy-name"
+        val temporaryFile = fileSystem.createTemporaryFile(fileName)
+
+        val file = temporaryFile.shouldBeRight()
+        file
+            .shouldBeInstanceOf<Path.File>()
+        file.absolutePath
+            .shouldBe("${testHelpers.temporaryDirectory}/$fileName")
+    }
+
+    test("create named temporary file that already exists") {
+        val fileName = "my-fancy-name"
+        fileSystem.createTemporaryFile(fileName).shouldBeRight()
+        val temporaryFile = fileSystem.createTemporaryFile(fileName)
+
+        val file = temporaryFile.shouldBeLeft()
+        file
+            .shouldBeInstanceOf<MakeFileError.FileExists>()
     }
 
     test("application directory") {
