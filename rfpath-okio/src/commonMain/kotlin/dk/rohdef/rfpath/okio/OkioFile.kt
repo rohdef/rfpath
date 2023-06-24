@@ -64,6 +64,10 @@ class OkioFile private constructor(
                 return MakeFileError.FileExists(path.toString()).left()
             }
 
+            fileSystem.write(path, true) {
+                writeUtf8("")
+            }
+
             return OkioFile(fileSystem, path).right()
         }
     }

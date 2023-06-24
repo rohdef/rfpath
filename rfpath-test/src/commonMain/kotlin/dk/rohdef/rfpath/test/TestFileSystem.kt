@@ -24,6 +24,10 @@ class TestFileSystem(
             .right()
     }
 
+    override suspend fun createTemporaryFile(fileNmae: String): Either<PathUtilityError.CreateTemporaryFileError, Path.File> {
+        TODO("not implemented")
+    }
+
     override suspend fun applicationDirectory(): Either<DirectoryInstance, Path.Directory> {
         return application.right()
     }

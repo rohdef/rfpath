@@ -25,15 +25,14 @@ class OkioFileSystem(
     override suspend fun workDirectory(): Either<DirectoryInstance, Path.Directory> =
         OkioDirectory.directory(fileSystem, workDirectory)
 
-    override suspend fun createTemporaryFile(): Either<PathUtilityError.CreateTemporaryFileError, Path.File> {
+    override suspend fun createTemporaryFile(fileNmae: String): Either<PathUtilityError.CreateTemporaryFileError, Path.File> {
         return either {
             val directory = OkioDirectory.directory(fileSystem, temporaryDirectory)
                 .mapLeft { PathUtilityError.CreateTemporaryFileError.CannotGetTemporaryDirectory }
                 .bind()
-            val uuid = UUID.randomUUID().toString()
 
             directory
-                .makeFile("${uuid}")
+                .makeFile(fileNmae)
                 .mapLeft { PathUtilityError.CreateTemporaryFileError.CannotCreateFile }
                 .bind()
 

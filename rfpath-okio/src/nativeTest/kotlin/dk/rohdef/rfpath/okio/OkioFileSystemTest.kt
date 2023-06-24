@@ -1,8 +1,8 @@
 package dk.rohdef.rfpath.okio
 
-import dk.rohdef.rfpath.MakeFileError
 import dk.rohdef.rfpath.Path
 import dk.rohdef.rfpath.utility.FileSystem
+import dk.rohdef.rfpath.utility.PathUtilityError
 import io.kotest.assertions.arrow.core.shouldBeLeft
 import io.kotest.assertions.arrow.core.shouldBeRight
 import io.kotest.common.runBlocking
@@ -15,15 +15,16 @@ class OkioFileSystemTest : FunSpec({
     coroutineTestScope = true
 
     val testHelpers = OkioTestHelpers()
-    val okioFileSystem = runBlocking {
-        testHelpers.fileSystem()
+    lateinit var fileSystem: FileSystem
+
+    beforeTest {
+        fileSystem = OkioFileSystem.createPathUtilityUnsafe(
+            testHelpers.fileSystem(),
+            testHelpers.applicationDirectoryPath,
+            testHelpers.workingDirectoryPath,
+            testHelpers.temporaryDirectoryPath,
+        )
     }
-    val fileSystem: FileSystem = OkioFileSystem.createPathUtilityUnsafe(
-        okioFileSystem,
-        testHelpers.applicationDirectoryPath,
-        testHelpers.workingDirectoryPath,
-        testHelpers.temporaryDirectoryPath,
-    )
 
     test("create temporary file") {
         val temporaryFile = fileSystem.createTemporaryFile()
@@ -53,7 +54,7 @@ class OkioFileSystemTest : FunSpec({
 
         val file = temporaryFile.shouldBeLeft()
         file
-            .shouldBeInstanceOf<MakeFileError.FileExists>()
+            .shouldBe(PathUtilityError.CreateTemporaryFileError.CannotCreateFile)
     }
 
     test("application directory") {

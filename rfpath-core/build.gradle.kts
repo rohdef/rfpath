@@ -17,6 +17,9 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
+
+                // Needed for UUID
+                implementation("com.soywiz.korlibs.korio:korio:4.0.2")
             }
         }
         val commonTest by getting {
